@@ -108,7 +108,7 @@ namespace Configuration.Helper
             {
                 if(expireDays == null)
                 {
-                    expireDays = long.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
+                    expireDays = int.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
                 }
 
                 return expireDays;
