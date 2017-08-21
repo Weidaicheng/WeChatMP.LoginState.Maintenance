@@ -178,6 +178,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\WeChatLoginController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -253,6 +254,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cache.Redis\Cache.Redis.csproj">
+      <Project>{3fa14ff7-715f-483d-adb0-ed515c5432dd}</Project>
+      <Name>Cache.Redis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Configuration.Helper\Configuration.Helper.csproj">
+      <Project>{63f4e736-f4d6-49ce-a995-afd9de71e417}</Project>
+      <Name>Configuration.Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Redis.Model\Redis.Model.csproj">
+      <Project>{bc3f54e0-77a8-44c6-b388-20004503e289}</Project>
+      <Name>Redis.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeChat.Core\WeChat.Core.csproj">
+      <Project>{d55bb228-84d1-477f-89ec-66da2a504be6}</Project>
+      <Name>WeChat.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeChat.Model\WeChat.Model.csproj">
+      <Project>{78554f26-d9ad-49e7-9e0a-7866c70c8033}</Project>
+      <Name>WeChat.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
