@@ -3,7 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeChat.Core", "WeChat.Core\WeChat.Core.csproj", "{D55BB228-84D1-477F-89EC-66DA2A504BE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeChat.Model", "WeChat.Model\WeChat.Model.csproj", "{78554F26-D9AD-49E7-9E0A-7866C70C8033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Helper", "Configuration.Helper\Configuration.Helper.csproj", "{63F4E736-F4D6-49CE-A995-AFD9DE71E417}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{59DC450F-3C03-44DE-8919-496821BFD4B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache.Redis", "Cache.Redis\Cache.Redis.csproj", "{3FA14FF7-715F-483D-ADB0-ED515C5432DD}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D55BB228-84D1-477F-89EC-66DA2A504BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D55BB228-84D1-477F-89EC-66DA2A504BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D55BB228-84D1-477F-89EC-66DA2A504BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D55BB228-84D1-477F-89EC-66DA2A504BE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78554F26-D9AD-49E7-9E0A-7866C70C8033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78554F26-D9AD-49E7-9E0A-7866C70C8033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78554F26-D9AD-49E7-9E0A-7866C70C8033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78554F26-D9AD-49E7-9E0A-7866C70C8033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63F4E736-F4D6-49CE-A995-AFD9DE71E417}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63F4E736-F4D6-49CE-A995-AFD9DE71E417}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63F4E736-F4D6-49CE-A995-AFD9DE71E417}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63F4E736-F4D6-49CE-A995-AFD9DE71E417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59DC450F-3C03-44DE-8919-496821BFD4B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59DC450F-3C03-44DE-8919-496821BFD4B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59DC450F-3C03-44DE-8919-496821BFD4B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59DC450F-3C03-44DE-8919-496821BFD4B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
