@@ -1,5 +1,6 @@
 ﻿using Cache.Redis;
 using Configuration.Helper;
+using Redis.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +41,8 @@ namespace WebAPI.Controllers
                     if(result is OpenIdResultSuccess)
                     {
                         var oirs = result as OpenIdResultSuccess;
-                        Guid idSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
-                        return idSaved;
+                        OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                        return openIdResultSaved.Id;
                     }
                     else
                     {
@@ -60,8 +61,8 @@ namespace WebAPI.Controllers
                         if (result is OpenIdResultSuccess)
                         {
                             var oirs = result as OpenIdResultSuccess;
-                            Guid idSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
-                            return idSaved;
+                            OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                            return openIdResultSaved.Id;
                         }
                         else
                         {

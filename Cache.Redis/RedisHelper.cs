@@ -17,7 +17,7 @@ namespace Cache.Redis
         /// </summary>
         /// <param name="oirs"></param>
         /// <param name="ticks"></param>
-        public Guid SaveOpenId(OpenIdResultSuccess oirs, long ticks)
+        public OpenIdResult SaveOpenId(OpenIdResultSuccess oirs, long ticks)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace Cache.Redis
                         model.Id = Guid.NewGuid();
 
                         redisOIR.Store(model, new TimeSpan(ticks));
-                        return model.Id;
+                        return model;
                     }
                 }
             }
