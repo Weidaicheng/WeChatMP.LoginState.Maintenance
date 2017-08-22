@@ -11,8 +11,8 @@ namespace Configuration.Helper
         private static string appSecret;
         private static string weChatApiAddr;
         private static string redisServerHost;
-        private static int? redisServerPort = 6379;
-        private static int? expireDays = 20;
+        private static int? redisServerPort;
+        private static int? expireDays;
         #endregion
 
         #region log
