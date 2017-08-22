@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebAPI.Models;
 using WeChat.Core;
 using WeChat.Model;
 
@@ -25,7 +26,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public Guid? Login(string code, Guid? id)
+        public ResponseResult<Guid?> Login(string code, Guid? id)
         {
             try
             {
@@ -42,12 +43,22 @@ namespace WebAPI.Controllers
                     {
                         var oirs = result as OpenIdResultSuccess;
                         OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
-                        return openIdResultSaved.Id;
+                        return new ResponseResult<Guid?>()
+                        {
+                            ErrCode = 0,
+                            ErrMsg = "Success",
+                            Data = openIdResultSaved.Id
+                        };
                     }
                     else
                     {
                         var oirf = result as OpenIdResultFail;
-                        return null;
+                        return new ResponseResult<Guid?>()
+                        {
+                            ErrCode = 1001,
+                            ErrMsg = "获取OpenId失败",
+                            Data = null
+                        };
                     }
                 }
                 else
@@ -62,24 +73,44 @@ namespace WebAPI.Controllers
                         {
                             var oirs = result as OpenIdResultSuccess;
                             OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
-                            return openIdResultSaved.Id;
+                            return new ResponseResult<Guid?>()
+                            {
+                                ErrCode = 0,
+                                ErrMsg = "Success",
+                                Data = openIdResultSaved.Id
+                            };
                         }
                         else
                         {
                             var oirf = result as OpenIdResultFail;
-                            return null;
+                            return new ResponseResult<Guid?>()
+                            {
+                                ErrCode = 1001,
+                                ErrMsg = "获取OpenId失败",
+                                Data = null
+                            };
                         }
                     }
                     else
                     {
                         //返回OpenId
-                        return openId.Id;
+                        return new ResponseResult<Guid?>()
+                        {
+                            ErrCode = 0,
+                            ErrMsg = "Success",
+                            Data = openId.Id
+                        };
                     }
                 }
             }
             catch(Exception ex)
             {
-                return null;
+                return new ResponseResult<Guid?>()
+                {
+                    ErrCode = 1002,
+                    ErrMsg = ex.Message,
+                    Data = null
+                };
             }
         }
         #endregion
