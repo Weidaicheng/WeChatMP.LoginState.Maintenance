@@ -1,11 +1,8 @@
 ﻿using Configuration.Helper;
 using Newtonsoft.Json;
+using NLog;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeChat.Model;
 
 namespace WeChat.Core
@@ -14,6 +11,10 @@ namespace WeChat.Core
     {
         #region field
         private readonly IRestClient client;
+        #endregion
+
+        #region log
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
         #endregion
 
         #region .ctor
@@ -53,6 +54,7 @@ namespace WeChat.Core
             }
             catch (Exception ex)
             {
+                logger.Error(ex);
                 throw ex;
             }
         }

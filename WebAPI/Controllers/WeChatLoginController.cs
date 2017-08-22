@@ -1,5 +1,6 @@
 ﻿using Cache.Redis;
 using Configuration.Helper;
+using NLog;
 using Redis.Model;
 using System;
 using System.Collections.Generic;
@@ -20,25 +21,30 @@ namespace WebAPI.Controllers
         private readonly RedisHelper redisHelper = new RedisHelper();
         #endregion
 
+        #region log
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
         #region API
         /// <summary>
         /// 登录
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public ResponseResult<Guid?> Login(string code, Guid? id)
+        [HttpPost]
+        public ResponseResult<Guid?> Login([FromBody]LoginRequest model)
         {
             try
             {
-                if(string.IsNullOrEmpty(code))
+                if(string.IsNullOrEmpty(model.Code))
                 {
                     throw new ArgumentException("Code为空");
                 }
 
-                if(id == null)
+                if(model.Id == null)
                 {
                     //直接调用微信接口登录
-                    dynamic result = weChatHelper.GetOpenId(code);
+                    dynamic result = weChatHelper.GetOpenId(model.Code);
                     if(result is OpenIdResultSuccess)
                     {
                         var oirs = result as OpenIdResultSuccess;
@@ -64,11 +70,11 @@ namespace WebAPI.Controllers
                 else
                 {
                     //检查缓存中OpenId是否过期
-                    var openId = redisHelper.GetSavedOpenId(id.Value);
+                    var openId = redisHelper.GetSavedOpenId(model.Id.Value);
                     if(openId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
-                        dynamic result = weChatHelper.GetOpenId(code);
+                        dynamic result = weChatHelper.GetOpenId(model.Code);
                         if (result is OpenIdResultSuccess)
                         {
                             var oirs = result as OpenIdResultSuccess;
@@ -105,6 +111,7 @@ namespace WebAPI.Controllers
             }
             catch(Exception ex)
             {
+                logger.Error(ex);
                 return new ResponseResult<Guid?>()
                 {
                     ErrCode = 1002,

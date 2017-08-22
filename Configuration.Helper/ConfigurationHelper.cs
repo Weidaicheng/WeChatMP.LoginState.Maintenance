@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NLog;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Configuration.Helper
 {
@@ -18,6 +15,10 @@ namespace Configuration.Helper
         private static int? expireDays = 20;
         #endregion
 
+        #region log
+        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
         #region 属性
         /// <summary>
         /// AppId
@@ -26,12 +27,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(string.IsNullOrEmpty(appId))
+                try
                 {
-                    appId = ConfigurationManager.AppSettings["AppId"];
-                }
+                    if (string.IsNullOrEmpty(appId))
+                    {
+                        appId = ConfigurationManager.AppSettings["AppId"];
+                    }
 
-                return appId;
+                    return appId;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
 
@@ -42,12 +51,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(string.IsNullOrEmpty(AppSecret))
+                try
                 {
-                    appSecret = ConfigurationManager.AppSettings["AppSecret"];
-                }
+                    if (string.IsNullOrEmpty(appSecret))
+                    {
+                        appSecret = ConfigurationManager.AppSettings["AppSecret"];
+                    }
 
-                return appSecret;
+                    return appSecret;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
 
@@ -58,12 +75,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(string.IsNullOrEmpty(weChatApiAddr))
+                try
                 {
-                    weChatApiAddr = ConfigurationManager.AppSettings["WeChatApiAddr"];
-                }
+                    if (string.IsNullOrEmpty(weChatApiAddr))
+                    {
+                        weChatApiAddr = ConfigurationManager.AppSettings["WeChatApiAddr"];
+                    }
 
-                return weChatApiAddr;
+                    return weChatApiAddr;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
 
@@ -74,12 +99,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(string.IsNullOrEmpty(redisServerHost))
+                try
                 {
-                    redisServerHost = ConfigurationManager.AppSettings["RedisServerHost"];
-                }
+                    if (string.IsNullOrEmpty(redisServerHost))
+                    {
+                        redisServerHost = ConfigurationManager.AppSettings["RedisServerHost"];
+                    }
 
-                return redisServerHost;
+                    return redisServerHost;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
 
@@ -90,12 +123,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(redisServerPort == null)
+                try
                 {
-                    redisServerPort = int.Parse(ConfigurationManager.AppSettings["RedisServerPort"]);
-                }
+                    if (redisServerPort == null)
+                    {
+                        redisServerPort = int.Parse(ConfigurationManager.AppSettings["RedisServerPort"]);
+                    }
 
-                return redisServerPort;
+                    return redisServerPort;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
 
@@ -106,12 +147,20 @@ namespace Configuration.Helper
         {
             get
             {
-                if(expireDays == null)
+                try
                 {
-                    expireDays = int.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
-                }
+                    if (expireDays == null)
+                    {
+                        expireDays = int.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
+                    }
 
-                return expireDays;
+                    return expireDays;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    throw ex;
+                }
             }
         }
         #endregion

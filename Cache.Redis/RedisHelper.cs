@@ -1,17 +1,18 @@
 ﻿using Configuration.Helper;
+using NLog;
 using Redis.Model;
 using ServiceStack.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeChat.Model;
 
 namespace Cache.Redis
 {
     public class RedisHelper
     {
+        #region log
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
         /// <summary>
         /// 保存OpenId到Redis服务器
         /// </summary>
@@ -37,6 +38,7 @@ namespace Cache.Redis
             }
             catch (Exception ex)
             {
+                logger.Error(ex);
                 throw ex;
             }
         }
@@ -63,6 +65,7 @@ namespace Cache.Redis
             }
             catch(Exception ex)
             {
+                logger.Error(ex);
                 throw ex;
             }
         }
