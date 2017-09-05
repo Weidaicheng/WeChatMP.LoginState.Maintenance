@@ -1,6 +1,4 @@
-﻿using NLog;
-using System;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace Configuration.Helper
 {
@@ -12,11 +10,8 @@ namespace Configuration.Helper
         private static string weChatApiAddr;
         private static string redisServerHost;
         private static int? redisServerPort;
+        private static string redisPassword;
         private static int? expireDays;
-        #endregion
-
-        #region log
-        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
         #endregion
 
         #region 属性
@@ -27,20 +22,12 @@ namespace Configuration.Helper
         {
             get
             {
-                try
+                if (string.IsNullOrEmpty(appId))
                 {
-                    if (string.IsNullOrEmpty(appId))
-                    {
-                        appId = ConfigurationManager.AppSettings["AppId"];
-                    }
+                    appId = ConfigurationManager.AppSettings["AppId"];
+                }
 
-                    return appId;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    throw ex;
-                }
+                return appId;
             }
         }
 
@@ -51,20 +38,12 @@ namespace Configuration.Helper
         {
             get
             {
-                try
+                if (string.IsNullOrEmpty(appSecret))
                 {
-                    if (string.IsNullOrEmpty(appSecret))
-                    {
-                        appSecret = ConfigurationManager.AppSettings["AppSecret"];
-                    }
+                    appSecret = ConfigurationManager.AppSettings["AppSecret"];
+                }
 
-                    return appSecret;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    throw ex;
-                }
+                return appSecret;
             }
         }
 
@@ -75,20 +54,12 @@ namespace Configuration.Helper
         {
             get
             {
-                try
+                if (string.IsNullOrEmpty(weChatApiAddr))
                 {
-                    if (string.IsNullOrEmpty(weChatApiAddr))
-                    {
-                        weChatApiAddr = ConfigurationManager.AppSettings["WeChatApiAddr"];
-                    }
+                    weChatApiAddr = ConfigurationManager.AppSettings["WeChatApiAddr"];
+                }
 
-                    return weChatApiAddr;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    throw ex;
-                }
+                return weChatApiAddr;
             }
         }
 
@@ -99,44 +70,44 @@ namespace Configuration.Helper
         {
             get
             {
-                try
+                if (string.IsNullOrEmpty(redisServerHost))
                 {
-                    if (string.IsNullOrEmpty(redisServerHost))
-                    {
-                        redisServerHost = ConfigurationManager.AppSettings["RedisServerHost"];
-                    }
+                    redisServerHost = ConfigurationManager.AppSettings["RedisServerHost"];
+                }
 
-                    return redisServerHost;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    throw ex;
-                }
+                return redisServerHost;
             }
         }
 
         /// <summary>
-        /// Redis服务器端口（默认：6379）
+        /// Redis服务器端口
         /// </summary>
         public static int? RedisServerPort
         {
             get
             {
-                try
+                if (redisServerPort == null)
                 {
-                    if (redisServerPort == null)
-                    {
-                        redisServerPort = int.Parse(ConfigurationManager.AppSettings["RedisServerPort"]);
-                    }
+                    redisServerPort = int.Parse(ConfigurationManager.AppSettings["RedisServerPort"]);
+                }
 
-                    return redisServerPort;
-                }
-                catch (Exception ex)
+                return redisServerPort;
+            }
+        }
+
+        /// <summary>
+        /// Redis密码
+        /// </summary>
+        public static string RedisPassword
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(redisPassword))
                 {
-                    logger.Error(ex);
-                    throw ex;
+                    redisPassword = ConfigurationManager.AppSettings["RedisPassword"];
                 }
+
+                return redisPassword;
             }
         }
 
@@ -147,20 +118,12 @@ namespace Configuration.Helper
         {
             get
             {
-                try
+                if (expireDays == null)
                 {
-                    if (expireDays == null)
-                    {
-                        expireDays = int.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
-                    }
+                    expireDays = int.Parse(ConfigurationManager.AppSettings["ExpireDays"]);
+                }
 
-                    return expireDays;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    throw ex;
-                }
+                return expireDays;
             }
         }
         #endregion

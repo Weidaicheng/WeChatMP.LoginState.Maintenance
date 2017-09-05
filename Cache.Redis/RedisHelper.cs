@@ -22,7 +22,7 @@ namespace Cache.Redis
         {
             try
             {
-                using (var redisManager = new PooledRedisClientManager($"{ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
+                using (var redisManager = new PooledRedisClientManager($"{(string.IsNullOrEmpty(ConfigurationHelper.RedisPassword) ? string.Empty :  $"{ConfigurationHelper.RedisPassword}@") + ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
                 {
                     using (var client = redisManager.GetClient())
                     {
@@ -57,7 +57,7 @@ namespace Cache.Redis
         {
             try
             {
-                using (var redisManager = new PooledRedisClientManager($"{ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
+                using (var redisManager = new PooledRedisClientManager($"{(string.IsNullOrEmpty(ConfigurationHelper.RedisPassword) ? string.Empty : $"{ConfigurationHelper.RedisPassword}@") + ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
                 {
                     using(var client = redisManager.GetClient())
                     {
