@@ -28,8 +28,13 @@ namespace Cache.Redis
                     {
                         var redisOIR = client.As<OpenIdResult>();
 
-                        OpenIdResult model = oirs as OpenIdResult;
-                        model.Id = Guid.NewGuid();
+                        OpenIdResult model = new OpenIdResult()
+                        {
+                            Id = Guid.NewGuid(),
+                            openid = oirs.openid,
+                            session_key = oirs.session_key,
+                            unionid = oirs.unionid
+                        };
 
                         redisOIR.Store(model, new TimeSpan(ticks));
                         return model;

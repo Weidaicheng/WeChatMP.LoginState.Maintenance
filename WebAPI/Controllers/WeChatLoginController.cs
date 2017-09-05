@@ -36,14 +36,15 @@ namespace WebAPI.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(model.Code))
-                {
-                    throw new ArgumentException("Code为空");
-                }
-
                 if(model.Id == null)
                 {
                     //直接调用微信接口登录
+                    //检查Code
+                    if (string.IsNullOrEmpty(model.Code))
+                    {
+                        throw new ArgumentException("Code为空");
+                    }
+
                     dynamic result = weChatHelper.GetOpenId(model.Code);
                     if(result is OpenIdResultSuccess)
                     {
@@ -59,6 +60,7 @@ namespace WebAPI.Controllers
                     else
                     {
                         var oirf = result as OpenIdResultFail;
+                        logger.Error(oirf.errmsg);
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 1001,
@@ -74,6 +76,12 @@ namespace WebAPI.Controllers
                     if(openId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
+                        //检查Code
+                        if (string.IsNullOrEmpty(model.Code))
+                        {
+                            throw new ArgumentException("Code为空");
+                        }
+
                         dynamic result = weChatHelper.GetOpenId(model.Code);
                         if (result is OpenIdResultSuccess)
                         {
@@ -89,6 +97,7 @@ namespace WebAPI.Controllers
                         else
                         {
                             var oirf = result as OpenIdResultFail;
+                            logger.Error(oirf.errmsg);
                             return new ResponseResult<Guid?>()
                             {
                                 ErrCode = 1001,
@@ -99,6 +108,7 @@ namespace WebAPI.Controllers
                     }
                     else
                     {
+                        //OpenId未过期
                         //返回OpenId
                         return new ResponseResult<Guid?>()
                         {
