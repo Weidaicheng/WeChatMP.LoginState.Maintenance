@@ -2,6 +2,7 @@
 using NLog;
 using Redis.Model;
 using ServiceStack.Redis;
+using StackExchange.Redis;
 using System;
 using WeChat.Model;
 
@@ -9,6 +10,22 @@ namespace Cache.Redis
 {
     public class RedisHelper
     {
+        #region 字段
+        private static ConnectionMultiplexer _connection;
+        private static ConnectionMultiplexer Connection
+        {
+            get
+            {
+                if (_connection == null || !_connection.IsConnected)
+                {
+                    _connection = ConnectionMultiplexer.Connect($"{ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}{(string.IsNullOrEmpty(ConfigurationHelper.RedisPassword) ? string.Empty : string.Concat(",password=", ConfigurationHelper.RedisPassword))}");
+                }
+
+                return _connection;
+            }
+        }
+        #endregion
+
         #region log
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
         #endregion
@@ -22,24 +39,18 @@ namespace Cache.Redis
         {
             try
             {
-                using (var redisManager = new PooledRedisClientManager($"{(string.IsNullOrEmpty(ConfigurationHelper.RedisPassword) ? string.Empty :  $"{ConfigurationHelper.RedisPassword}@") + ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
+                var db = Connection.GetDatabase();
+
+                OpenIdResult model = new OpenIdResult()
                 {
-                    using (var client = redisManager.GetClient())
-                    {
-                        var redisOIR = client.As<OpenIdResult>();
+                    Id = Guid.NewGuid(),
+                    openid = oirs.openid,
+                    session_key = oirs.session_key,
+                    unionid = oirs.unionid
+                };
 
-                        OpenIdResult model = new OpenIdResult()
-                        {
-                            Id = Guid.NewGuid(),
-                            openid = oirs.openid,
-                            session_key = oirs.session_key,
-                            unionid = oirs.unionid
-                        };
-
-                        redisOIR.Store(model, new TimeSpan(ticks));
-                        return model;
-                    }
-                }
+                db.ObjectSet(model.Id.ToString(), model, TimeSpan.FromDays(ConfigurationHelper.ExpireDays.Value).Ticks);
+                return model;
             }
             catch (Exception ex)
             {
@@ -57,18 +68,12 @@ namespace Cache.Redis
         {
             try
             {
-                using (var redisManager = new PooledRedisClientManager($"{(string.IsNullOrEmpty(ConfigurationHelper.RedisPassword) ? string.Empty : $"{ConfigurationHelper.RedisPassword}@") + ConfigurationHelper.RedisServerHost}:{ConfigurationHelper.RedisServerPort}"))
-                {
-                    using(var client = redisManager.GetClient())
-                    {
-                        var redisOIR = client.As<OpenIdResult>();
+                var db = Connection.GetDatabase();
 
-                        OpenIdResult savedOpenId = redisOIR.GetById(id);
-                        return savedOpenId;
-                    }
-                }
+                OpenIdResult savedOpenId = db.ObjectGet<OpenIdResult>(id.ToString());
+                return savedOpenId;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex);
                 throw ex;
