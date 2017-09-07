@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WebAPI.Controllers;
 using WeChat.Core;
 
 namespace WebAPI
@@ -27,8 +28,10 @@ namespace WebAPI
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //Autofac
+            HttpConfiguration config = GlobalConfiguration.Configuration;
             var builder = new ContainerBuilder();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterType<WeChatLoginController>();
             builder.RegisterType<WeChatServiceHandler>();
 
             builder.RegisterType<RedisHandler>().As<RedisHandler>();
@@ -36,6 +39,7 @@ namespace WebAPI
             builder.Register(c => new RestClient(ConfigurationHelper.WeChatApiAddr)).As<IRestClient>();
 
             var container = builder.Build();
+            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
         }
     }
 }
