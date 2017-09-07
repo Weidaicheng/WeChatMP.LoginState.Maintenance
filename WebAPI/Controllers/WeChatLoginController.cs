@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using WebAPI.Models;
 using WeChat.Core;
 using Model;
 
@@ -43,13 +42,18 @@ namespace WebAPI.Controllers
         {
             try
             {
-                if(model.Id == null)
+                if(model.UserId == null)
                 {
                     //直接调用微信接口登录
                     //检查Code
                     if (string.IsNullOrEmpty(model.Code))
                     {
-                        throw new ArgumentException("Code为空");
+                        return new ResponseResult<Guid?>()
+                        {
+                            ErrCode = 1002,
+                            ErrMsg = "Code为空",
+                            Data = null
+                        };
                     }
 
                     dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
@@ -79,14 +83,19 @@ namespace WebAPI.Controllers
                 else
                 {
                     //检查缓存中OpenId是否过期
-                    var openId = _redisHandler.GetSavedOpenId(model.Id.Value);
+                    var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
                     if(openId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
                         //检查Code
                         if (string.IsNullOrEmpty(model.Code))
                         {
-                            throw new ArgumentException("Code为空");
+                            return new ResponseResult<Guid?>()
+                            {
+                                ErrCode = 1002,
+                                ErrMsg = "Code为空",
+                                Data = null
+                            };
                         }
 
                         dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
@@ -116,7 +125,7 @@ namespace WebAPI.Controllers
                     else
                     {
                         //OpenId未过期
-                        //返回OpenId
+                        //返回用户Id
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 0,

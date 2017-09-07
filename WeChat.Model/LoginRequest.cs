@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebAPI.Models
+namespace Model
 {
-    public class LoginRequest
+    /// <summary>
+    /// 登录请求数据类
+    /// </summary>
+    public class LoginRequest : RequestBase
     {
         public string Code { get; set; }
-        public Guid? Id { get; set; }
     }
 }

@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebAPI.Models
+namespace Model
 {
+    /// <summary>
+    /// 回应数据类-泛型
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ResponseResult<T>
     {
         /// <summary>
