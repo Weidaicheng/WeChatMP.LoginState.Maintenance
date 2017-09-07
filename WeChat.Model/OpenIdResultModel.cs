@@ -4,8 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeChat.Model
+namespace Model
 {
+    /// <summary>
+    /// OpenId成功结果-用于Redis保存
+    /// </summary>
+    public class OpenIdResultModel : OpenIdResultSuccess
+    {
+        public Guid Id { get; set; }
+    }
+
     /// <summary>
     /// OpenId成功结果
     /// </summary>

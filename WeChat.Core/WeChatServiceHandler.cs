@@ -3,14 +3,17 @@ using Newtonsoft.Json;
 using NLog;
 using RestSharp;
 using System;
-using WeChat.Model;
+using Model;
 
 namespace WeChat.Core
 {
-    public class WeChatHelper
+    /// <summary>
+    /// 微信接口处理类
+    /// </summary>
+    public class WeChatServiceHandler
     {
         #region field
-        private readonly IRestClient client;
+        private readonly IRestClient _client;
         #endregion
 
         #region log
@@ -18,9 +21,9 @@ namespace WeChat.Core
         #endregion
 
         #region .ctor
-        public WeChatHelper()
+        public WeChatServiceHandler(IRestClient client)
         {
-            client = new RestClient(ConfigurationHelper.WeChatApiAddr);
+            _client = client;
         }
         #endregion
 
@@ -40,7 +43,7 @@ namespace WeChat.Core
                 request.AddParameter("js_code", code);
                 request.AddParameter("grant_type", "authorization_code");
 
-                IRestResponse response = client.Execute(request);
+                IRestResponse response = _client.Execute(request);
                 if (response.Content.Contains("openid"))
                 {
                     OpenIdResultSuccess result = JsonConvert.DeserializeObject<OpenIdResultSuccess>(response.Content);

@@ -1,16 +1,14 @@
 ﻿using Configuration.Helper;
 using NLog;
-using Redis.Model;
-using ServiceStack.Redis;
 using StackExchange.Redis;
 using System;
-using WeChat.Model;
+using Model;
 
 namespace Cache.Redis
 {
-    public class RedisHelper
+    public class RedisHandler
     {
-        #region 字段
+        #region Connection
         private static ConnectionMultiplexer _connection;
         private static ConnectionMultiplexer Connection
         {
@@ -35,13 +33,13 @@ namespace Cache.Redis
         /// </summary>
         /// <param name="oirs"></param>
         /// <param name="ticks"></param>
-        public OpenIdResult SaveOpenId(OpenIdResultSuccess oirs, long ticks)
+        public OpenIdResultModel SaveOpenId(OpenIdResultSuccess oirs, long ticks)
         {
             try
             {
                 var db = Connection.GetDatabase();
 
-                OpenIdResult model = new OpenIdResult()
+                OpenIdResultModel model = new OpenIdResultModel()
                 {
                     Id = Guid.NewGuid(),
                     openid = oirs.openid,
@@ -64,13 +62,13 @@ namespace Cache.Redis
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public OpenIdResult GetSavedOpenId(Guid id)
+        public OpenIdResultModel GetSavedOpenId(Guid id)
         {
             try
             {
                 var db = Connection.GetDatabase();
 
-                OpenIdResult savedOpenId = db.ObjectGet<OpenIdResult>(id.ToString());
+                OpenIdResultModel savedOpenId = db.ObjectGet<OpenIdResultModel>(id.ToString());
                 return savedOpenId;
             }
             catch (Exception ex)

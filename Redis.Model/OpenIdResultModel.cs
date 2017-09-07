@@ -7,8 +7,5 @@ using WeChat.Model;
 
 namespace Redis.Model
 {
-    public class OpenIdResult : OpenIdResultSuccess
-    {
-        public Guid Id { get; set; }
-    }
+    
 }

@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WeChatHelper.cs" />
+    <Compile Include="WeChatServiceHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,9 +61,9 @@
       <Project>{63f4e736-f4d6-49ce-a995-afd9de71e417}</Project>
       <Name>Configuration.Helper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WeChat.Model\WeChat.Model.csproj">
+    <ProjectReference Include="..\WeChat.Model\Model.csproj">
       <Project>{78554f26-d9ad-49e7-9e0a-7866c70c8033}</Project>
-      <Name>WeChat.Model</Name>
+      <Name>Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

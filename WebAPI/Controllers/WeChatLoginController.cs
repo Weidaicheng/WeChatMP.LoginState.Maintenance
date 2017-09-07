@@ -1,7 +1,6 @@
 ﻿using Cache.Redis;
 using Configuration.Helper;
 using NLog;
-using Redis.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +9,27 @@ using System.Net.Http;
 using System.Web.Http;
 using WebAPI.Models;
 using WeChat.Core;
-using WeChat.Model;
+using Model;
 
 namespace WebAPI.Controllers
 {
     public class WeChatLoginController : ApiController
     {
         #region field
-        private readonly WeChatHelper weChatHelper = new WeChatHelper();
-        private readonly RedisHelper redisHelper = new RedisHelper();
+        private readonly WeChatServiceHandler _weChatServiceHandler;
+        private readonly RedisHandler _redisHandler;
         #endregion
 
         #region log
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
+        #region .ctor
+        public WeChatLoginController(WeChatServiceHandler weChatServiceHandler, RedisHandler redisHandler)
+        {
+            _weChatServiceHandler = weChatServiceHandler;
+            _redisHandler = redisHandler;
+        }
         #endregion
 
         #region API
@@ -45,11 +52,11 @@ namespace WebAPI.Controllers
                         throw new ArgumentException("Code为空");
                     }
 
-                    dynamic result = weChatHelper.GetOpenId(model.Code);
+                    dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
                     if(result is OpenIdResultSuccess)
                     {
                         var oirs = result as OpenIdResultSuccess;
-                        OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                        OpenIdResultModel openIdResultSaved = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 0,
@@ -72,7 +79,7 @@ namespace WebAPI.Controllers
                 else
                 {
                     //检查缓存中OpenId是否过期
-                    var openId = redisHelper.GetSavedOpenId(model.Id.Value);
+                    var openId = _redisHandler.GetSavedOpenId(model.Id.Value);
                     if(openId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
@@ -82,11 +89,11 @@ namespace WebAPI.Controllers
                             throw new ArgumentException("Code为空");
                         }
 
-                        dynamic result = weChatHelper.GetOpenId(model.Code);
+                        dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
                         if (result is OpenIdResultSuccess)
                         {
                             var oirs = result as OpenIdResultSuccess;
-                            OpenIdResult openIdResultSaved = redisHelper.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                            OpenIdResultModel openIdResultSaved = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
                             return new ResponseResult<Guid?>()
                             {
                                 ErrCode = 0,

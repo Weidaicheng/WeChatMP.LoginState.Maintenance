@@ -47,6 +47,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.1.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.WebApi.3.1.0\lib\net40\Autofac.Integration.WebApi.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
@@ -56,6 +62,9 @@
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -275,17 +284,13 @@
       <Project>{63f4e736-f4d6-49ce-a995-afd9de71e417}</Project>
       <Name>Configuration.Helper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Redis.Model\Redis.Model.csproj">
-      <Project>{bc3f54e0-77a8-44c6-b388-20004503e289}</Project>
-      <Name>Redis.Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WeChat.Core\WeChat.Core.csproj">
       <Project>{d55bb228-84d1-477f-89ec-66da2a504be6}</Project>
       <Name>WeChat.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WeChat.Model\WeChat.Model.csproj">
+    <ProjectReference Include="..\WeChat.Model\Model.csproj">
       <Project>{78554f26-d9ad-49e7-9e0a-7866c70c8033}</Project>
-      <Name>WeChat.Model</Name>
+      <Name>Model</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
