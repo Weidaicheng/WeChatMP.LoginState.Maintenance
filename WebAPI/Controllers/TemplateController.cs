@@ -141,5 +141,55 @@ namespace WebAPI.Controllers
 				};
 			}
 		}
-	}
+
+        /// <summary>
+        /// 组合模板并添加至帐号下的个人模板库
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResponseResult<string> AddTemplate([FromBody]TemplateAddRequest model)
+        {
+            try
+            {
+                string accessTokenStr = _redisHandler.GetAccessToken();
+                if (string.IsNullOrEmpty(accessTokenStr))
+                {
+                    accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+                    _redisHandler.SaveAccessToken(accessTokenStr);
+                }
+
+                TemplateAdd templateAdd = _weChatServiceHandler.AddTemplate(accessTokenStr, model.Id, model.KyewordIdList);
+                if (templateAdd.errcode == 0)
+                {
+                    return new ResponseResult<string>()
+                    {
+                        ErrCode = 0,
+                        ErrMsg = "success",
+                        Data = templateAdd.template_id
+                    };
+                }
+                else
+                {
+                    logger.Error(templateAdd.errmsg);
+                    return new ResponseResult<string>()
+                    {
+                        ErrCode = 1001,
+                        ErrMsg = templateAdd.errmsg,
+                        Data = null
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return new ResponseResult<string>()
+                {
+                    ErrCode = 1003,
+                    ErrMsg = ex.Message,
+                    Data = null
+                };
+            }
+        }
+    }
 }
