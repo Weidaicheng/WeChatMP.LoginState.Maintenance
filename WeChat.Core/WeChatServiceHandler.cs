@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using NLog;
 using RestSharp;
 using System;
-using Model;
 using Model.WeChat;
 
 namespace WeChat.Core
@@ -48,12 +47,12 @@ namespace WeChat.Core
                 IRestResponse response = _client.Execute(request);
                 if (response.Content.Contains("openid"))
                 {
-                    OpenIdResultSuccess result = JsonConvert.DeserializeObject<OpenIdResultSuccess>(response.Content);
+                    OpenId result = JsonConvert.DeserializeObject<OpenId>(response.Content);
                     return result;
                 }
                 else
                 {
-                    OpenIdResultFail result = JsonConvert.DeserializeObject<OpenIdResultFail>(response.Content);
+                    Error result = JsonConvert.DeserializeObject<Error>(response.Content);
                     return result;
                 }
             }
@@ -261,7 +260,7 @@ namespace WeChat.Core
 		/// <param name="accessToken"></param>
 		/// <param name="templateId"></param>
 		/// <returns></returns>
-		public TemplateBase DeleteTemplate(string accessToken, string templateId)
+		public Error DeleteTemplate(string accessToken, string templateId)
 		{
 			try
 			{
@@ -282,7 +281,7 @@ namespace WeChat.Core
 				});
 
 				IRestResponse response = _client.Execute(request);
-				return JsonConvert.DeserializeObject<TemplateBase>(response.Content);
+				return JsonConvert.DeserializeObject<Error>(response.Content);
 			}
 			catch (Exception ex)
 			{
@@ -303,7 +302,7 @@ namespace WeChat.Core
 		/// <param name="color"></param>
 		/// <param name="emphasisKeyword"></param>
 		/// <returns></returns>
-		public TemplateBase SendTemplate(string accessToken, string userOpenId, string templateId, string page, string formId, string data, string color, string emphasisKeyword)
+		public Error SendTemplate(string accessToken, string userOpenId, string templateId, string page, string formId, string data, string color, string emphasisKeyword)
 		{
 			try
 			{
@@ -341,7 +340,7 @@ namespace WeChat.Core
 				});
 
 				IRestResponse response = _client.Execute(request);
-				return JsonConvert.DeserializeObject<TemplateBase>(response.Content);
+				return JsonConvert.DeserializeObject<Error>(response.Content);
 			}
 			catch (Exception ex)
 			{

@@ -1,6 +1,6 @@
-﻿namespace Model
+﻿namespace Model.Request
 {
-	public class TemplateListRequest : RequestBase
+	public class TemplateListRequest
 	{
 		public int Offset { get; set; }
 		public int Count { get; set; }

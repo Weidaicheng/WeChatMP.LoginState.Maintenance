@@ -2,7 +2,8 @@
 using NLog;
 using StackExchange.Redis;
 using System;
-using Model;
+using RedisOpenId = Model.Redis.OpenId;
+using WeChatOpenId = Model.WeChat.OpenId;
 
 namespace Cache.Redis
 {
@@ -31,23 +32,23 @@ namespace Cache.Redis
         /// <summary>
         /// 保存OpenId到Redis服务器
         /// </summary>
-        /// <param name="oirs"></param>
+        /// <param name="openId"></param>
         /// <param name="ticks"></param>
-        public OpenIdResultModel SaveOpenId(OpenIdResultSuccess oirs, long ticks)
+        public RedisOpenId SaveOpenId(WeChatOpenId openId, long ticks)
         {
             try
             {
                 var db = Connection.GetDatabase();
 
-                OpenIdResultModel model = new OpenIdResultModel()
+                RedisOpenId model = new RedisOpenId()
                 {
-                    Id = Guid.NewGuid(),
-                    openid = oirs.openid,
-                    session_key = oirs.session_key,
-                    unionid = oirs.unionid
+                    UserId = Guid.NewGuid(),
+                    openid = openId.openid,
+                    session_key = openId.session_key,
+                    unionid = openId.unionid
                 };
 
-                db.ObjectSet(model.Id.ToString(), model, TimeSpan.FromDays(ConfigurationHelper.ExpireDays.Value).Ticks);
+                db.ObjectSet(model.UserId.ToString(), model, TimeSpan.FromDays(ConfigurationHelper.ExpireDays.Value).Ticks);
                 return model;
             }
             catch (Exception ex)
@@ -62,13 +63,13 @@ namespace Cache.Redis
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public OpenIdResultModel GetSavedOpenId(Guid id)
+        public RedisOpenId GetSavedOpenId(Guid id)
         {
             try
             {
                 var db = Connection.GetDatabase();
 
-                OpenIdResultModel savedOpenId = db.ObjectGet<OpenIdResultModel>(id.ToString());
+                RedisOpenId savedOpenId = db.ObjectGet<RedisOpenId>(id.ToString());
                 return savedOpenId;
             }
             catch (Exception ex)

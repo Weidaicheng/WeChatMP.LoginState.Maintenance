@@ -1,4 +1,6 @@
 ﻿using Model;
+using Model.Request;
+using Model.Response;
 using Model.WeChat;
 using NLog;
 using System;
@@ -34,7 +36,7 @@ namespace WebAPI.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ResponseResult<List<TemplateTitle>> GetTemplateTitleList([FromBody]TemplateListRequest model)
+		public ResponseResult<TemplateTitleList> GetTemplateTitleList([FromBody]TemplateListRequest model)
 		{
 			try
 			{
@@ -43,17 +45,17 @@ namespace WebAPI.Controllers
 				TemplateTitleList templateList = _weChatServiceHandler.GetTemplateTitleList(accessToken.access_token, model.Offset, model.Count);
 				if (templateList.errcode == 0)
 				{
-					return new ResponseResult<List<TemplateTitle>>()
+					return new ResponseResult<TemplateTitleList>()
 					{
 						ErrCode = 0,
 						ErrMsg = "success",
-						Data = templateList.list.ToList()
+						Data = templateList
 					}; 
 				}
 				else
 				{
 					logger.Error(templateList.errmsg);
-					return new ResponseResult<List<TemplateTitle>>()
+					return new ResponseResult<TemplateTitleList>()
 					{
 						ErrCode = 1001,
 						ErrMsg = templateList.errmsg,
@@ -64,7 +66,52 @@ namespace WebAPI.Controllers
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				return new ResponseResult<List<TemplateTitle>>()
+				return new ResponseResult<TemplateTitleList>()
+				{
+					ErrCode = 1003,
+					ErrMsg = ex.Message,
+					Data = null
+				};
+			}
+		}
+
+		/// <summary>
+		/// 获取模板库某个模板标题下关键词库
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ResponseResult<List<Keyword>> GetKeywordList([FromBody]KeywordListRequest model)
+		{
+			try
+			{
+				AccessToken accessToken = _weChatServiceHandler.GetAccessToken();
+
+				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(accessToken.access_token, model.Id);
+				if (keywordList.errcode == 0)
+				{
+					return new ResponseResult<List<Keyword>>()
+					{
+						ErrCode = 0,
+						ErrMsg = "success",
+						Data = keywordList.keyword_list.ToList()
+					};
+				}
+				else
+				{
+					logger.Error(keywordList.errmsg);
+					return new ResponseResult<List<Keyword>>()
+					{
+						ErrCode = 1001,
+						ErrMsg = keywordList.errmsg,
+						Data = null
+					};
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				return new ResponseResult<List<Keyword>>()
 				{
 					ErrCode = 1003,
 					ErrMsg = ex.Message,

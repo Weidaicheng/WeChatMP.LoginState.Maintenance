@@ -1,6 +1,6 @@
 ﻿namespace Model.WeChat
 {
-	public class TemplateTitleList : TemplateBase
+	public class TemplateTitleList : Error
 	{
 		public TemplateTitle[] list { get; set; }
 		public int total_count { get; set; }

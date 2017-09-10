@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Model
+﻿namespace Model.Response
 {
-    /// <summary>
-    /// 回应数据类-泛型
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ResponseResult<T>
+	/// <summary>
+	/// 回应数据类-泛型
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class ResponseResult<T>
     {
         /// <summary>
         /// 错误码

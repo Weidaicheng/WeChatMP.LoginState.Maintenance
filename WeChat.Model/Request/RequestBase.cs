@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Model
+namespace Model.Request
 {
     /// <summary>
     /// 请求数据类基类
     /// </summary>
-    public abstract class RequestBase
+    public class RequestBase
     {
         /// <summary>
         /// 用户Id

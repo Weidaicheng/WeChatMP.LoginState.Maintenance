@@ -8,7 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using WeChat.Core;
-using Model;
+using Model.Request;
+using Model.Response;
+using RedisOpenId = Model.Redis.OpenId;
+using WeChatOpenId = Model.WeChat.OpenId;
+using Model.WeChat;
 
 namespace WebAPI.Controllers
 {
@@ -57,21 +61,21 @@ namespace WebAPI.Controllers
                     }
 
                     dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
-                    if(result is OpenIdResultSuccess)
+                    if(result is WeChatOpenId)
                     {
-                        var oirs = result as OpenIdResultSuccess;
-                        OpenIdResultModel openIdResultSaved = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                        var openId = result as WeChatOpenId;
+                        var redisOpenId = _redisHandler.SaveOpenId(openId, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 0,
                             ErrMsg = "Success",
-                            Data = openIdResultSaved.Id
+                            Data = redisOpenId.UserId
                         };
                     }
                     else
                     {
-                        var oirf = result as OpenIdResultFail;
-                        logger.Error(oirf.errmsg);
+                        var error = result as Error;
+                        logger.Error(error.errmsg);
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 1001,
@@ -99,21 +103,21 @@ namespace WebAPI.Controllers
                         }
 
                         dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
-                        if (result is OpenIdResultSuccess)
+                        if (result is WeChatOpenId)
                         {
-                            var oirs = result as OpenIdResultSuccess;
-                            OpenIdResultModel openIdResultSaved = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                            var oirs = result as WeChatOpenId;
+                            var redisOpenId = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
                             return new ResponseResult<Guid?>()
                             {
                                 ErrCode = 0,
                                 ErrMsg = "Success",
-                                Data = openIdResultSaved.Id
+                                Data = redisOpenId.UserId
                             };
                         }
                         else
                         {
-                            var oirf = result as OpenIdResultFail;
-                            logger.Error(oirf.errmsg);
+                            var error = result as Error;
+                            logger.Error(error.errmsg);
                             return new ResponseResult<Guid?>()
                             {
                                 ErrCode = 1001,
@@ -130,7 +134,7 @@ namespace WebAPI.Controllers
                         {
                             ErrCode = 0,
                             ErrMsg = "Success",
-                            Data = openId.Id
+                            Data = openId.UserId
                         };
                     }
                 }
