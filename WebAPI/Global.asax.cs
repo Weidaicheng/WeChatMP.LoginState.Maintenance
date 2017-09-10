@@ -36,7 +36,7 @@ namespace WebAPI
 
             builder.RegisterType<RedisHandler>().As<RedisHandler>();
             builder.RegisterType<WeChatServiceHandler>().As<WeChatServiceHandler>();
-            builder.Register(c => new RestClient(ConfigurationHelper.WeChatApiAddr)).As<IRestClient>();
+			builder.RegisterType<RestClient>().As<IRestClient>();
 
             var container = builder.Build();
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);

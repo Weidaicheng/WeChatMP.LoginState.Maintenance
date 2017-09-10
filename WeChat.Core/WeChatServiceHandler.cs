@@ -24,6 +24,7 @@ namespace WeChat.Core
         public WeChatServiceHandler(IRestClient client)
         {
             _client = client;
+			_client.BaseUrl = new Uri(ConfigurationHelper.WeChatApiAddr);
         }
         #endregion
 
