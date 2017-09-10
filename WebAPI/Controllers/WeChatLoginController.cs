@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
                     if(result is WeChatOpenId)
                     {
                         var openId = result as WeChatOpenId;
-                        var redisOpenId = _redisHandler.SaveOpenId(openId, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                        var redisOpenId = _redisHandler.SaveOpenId(openId);
                         return new ResponseResult<Guid?>()
                         {
                             ErrCode = 0,
@@ -87,8 +87,8 @@ namespace WebAPI.Controllers
                 else
                 {
                     //检查缓存中OpenId是否过期
-                    var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
-                    if(openId == null)
+                    var redisOpenId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                    if(redisOpenId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
                         //检查Code
@@ -105,13 +105,13 @@ namespace WebAPI.Controllers
                         dynamic result = _weChatServiceHandler.GetOpenId(model.Code);
                         if (result is WeChatOpenId)
                         {
-                            var oirs = result as WeChatOpenId;
-                            var redisOpenId = _redisHandler.SaveOpenId(oirs, new TimeSpan(ConfigurationHelper.ExpireDays.Value, 0, 0, 0).Ticks);
+                            var openId = result as WeChatOpenId;
+                            var redisOpenIdSaved = _redisHandler.SaveOpenId(openId);
                             return new ResponseResult<Guid?>()
                             {
                                 ErrCode = 0,
                                 ErrMsg = "Success",
-                                Data = redisOpenId.UserId
+                                Data = redisOpenIdSaved.UserId
                             };
                         }
                         else
@@ -134,7 +134,7 @@ namespace WebAPI.Controllers
                         {
                             ErrCode = 0,
                             ErrMsg = "Success",
-                            Data = openId.UserId
+                            Data = redisOpenId.UserId
                         };
                     }
                 }

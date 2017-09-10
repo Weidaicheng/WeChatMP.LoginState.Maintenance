@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Cache.Redis;
+using Model;
 using Model.Request;
 using Model.Response;
 using Model.WeChat;
@@ -17,6 +18,7 @@ namespace WebAPI.Controllers
     {
 		#region field
 		private readonly WeChatServiceHandler _weChatServiceHandler;
+		private readonly RedisHandler _redisHandler;
 		#endregion
 
 		#region Log
@@ -24,9 +26,10 @@ namespace WebAPI.Controllers
 		#endregion
 
 		#region .ctor
-		public TemplateController(WeChatServiceHandler weChatServiceHandler)
+		public TemplateController(WeChatServiceHandler weChatServiceHandler, RedisHandler redisHandler)
 		{
 			_weChatServiceHandler = weChatServiceHandler;
+			_redisHandler = redisHandler;
 		}
 		#endregion
 
@@ -40,9 +43,14 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				AccessToken accessToken = _weChatServiceHandler.GetAccessToken();
+				string accessTokenStr = _redisHandler.GetAccessToken();
+				if(string.IsNullOrEmpty(accessTokenStr))
+				{
+					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+					_redisHandler.SaveAccessToken(accessTokenStr);
+				}
 
-				TemplateTitleList templateList = _weChatServiceHandler.GetTemplateTitleList(accessToken.access_token, model.Offset, model.Count);
+				TemplateTitleList templateList = _weChatServiceHandler.GetTemplateTitleList(accessTokenStr, model.Offset, model.Count);
 				if (templateList.errcode == 0)
 				{
 					return new ResponseResult<TemplateTitleList>()
@@ -85,9 +93,14 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				AccessToken accessToken = _weChatServiceHandler.GetAccessToken();
+				string accessTokenStr = _redisHandler.GetAccessToken();
+				if (string.IsNullOrEmpty(accessTokenStr))
+				{
+					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+					_redisHandler.SaveAccessToken(accessTokenStr);
+				}
 
-				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(accessToken.access_token, model.Id);
+				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(accessTokenStr, model.Id);
 				if (keywordList.errcode == 0)
 				{
 					return new ResponseResult<List<Keyword>>()

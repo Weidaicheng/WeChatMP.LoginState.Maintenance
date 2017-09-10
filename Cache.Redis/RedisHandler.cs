@@ -27,14 +27,14 @@ namespace Cache.Redis
 
         #region log
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// 保存OpenId到Redis服务器
-        /// </summary>
-        /// <param name="openId"></param>
-        /// <param name="ticks"></param>
-        public RedisOpenId SaveOpenId(WeChatOpenId openId, long ticks)
+		#region OpenId
+		/// <summary>
+		/// 保存OpenId到Redis服务器
+		/// </summary>
+		/// <param name="openId"></param>
+		public RedisOpenId SaveOpenId(WeChatOpenId openId)
         {
             try
             {
@@ -78,5 +78,47 @@ namespace Cache.Redis
                 throw ex;
             }
         }
-    }
+		#endregion
+
+		#region Access Token
+		/// <summary>
+		/// 保存Access Token
+		/// </summary>
+		/// <param name="accessToken"></param>
+		public void SaveAccessToken(string accessToken)
+		{
+			try
+			{
+				var db = Connection.GetDatabase();
+
+				db.StringSet("AccessToken", accessToken, TimeSpan.FromSeconds(ConfigurationHelper.AccessTokenExpireSeconds.Value));
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 获取Access Token
+		/// </summary>
+		/// <returns></returns>
+		public string GetAccessToken()
+		{
+			try
+			{
+				var db = Connection.GetDatabase();
+
+				string accessToken = db.StringGet("AccessToken");
+				return accessToken;
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+		#endregion
+	}
 }

@@ -12,13 +12,14 @@ namespace Configuration.Helper
         private static int? redisServerPort;
         private static string redisPassword;
         private static int? expireDays;
-        #endregion
+		private static int? accessTokenExpireSeconds;
+		#endregion
 
-        #region 属性
-        /// <summary>
-        /// AppId
-        /// </summary>
-        public static string AppId
+		#region 属性
+		/// <summary>
+		/// AppId
+		/// </summary>
+		public static string AppId
         {
             get
             {
@@ -112,7 +113,7 @@ namespace Configuration.Helper
         }
 
         /// <summary>
-        /// 过期天数
+        /// OpenId过期天数
         /// </summary>
         public static int? ExpireDays
         {
@@ -126,6 +127,22 @@ namespace Configuration.Helper
                 return expireDays;
             }
         }
-        #endregion
-    }
+
+		/// <summary>
+		/// AccessToken过期秒数
+		/// </summary>
+		public static int? AccessTokenExpireSeconds
+		{
+			get
+			{
+				if (accessTokenExpireSeconds == null)
+				{
+					accessTokenExpireSeconds = int.Parse(ConfigurationManager.AppSettings["AccessTokenExpireSeconds"]);
+				}
+
+				return accessTokenExpireSeconds;
+			}
+		}
+		#endregion
+	}
 }
