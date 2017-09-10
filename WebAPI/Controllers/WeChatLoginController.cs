@@ -140,7 +140,7 @@ namespace WebAPI.Controllers
                 logger.Error(ex);
                 return new ResponseResult<Guid?>()
                 {
-                    ErrCode = 1002,
+                    ErrCode = 1003,
                     ErrMsg = ex.Message,
                     Data = null
                 };

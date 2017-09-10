@@ -41,11 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TemplateListRequest.cs" />
+    <Compile Include="WeChat\AccessToken.cs" />
     <Compile Include="LoginRequest.cs" />
     <Compile Include="OpenIdResultModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestBase.cs" />
     <Compile Include="ResponseResult.cs" />
+    <Compile Include="WeChat\KeywordList.cs" />
+    <Compile Include="WeChat\TemplateAdd.cs" />
+    <Compile Include="WeChat\TemplateBase.cs" />
+    <Compile Include="WeChat\TemplateList.cs" />
+    <Compile Include="WeChat\TemplateTitleList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

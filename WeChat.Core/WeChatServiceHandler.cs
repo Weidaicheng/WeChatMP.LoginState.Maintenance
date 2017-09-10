@@ -4,6 +4,7 @@ using NLog;
 using RestSharp;
 using System;
 using Model;
+using Model.WeChat;
 
 namespace WeChat.Core
 {
@@ -62,6 +63,293 @@ namespace WeChat.Core
                 throw ex;
             }
         }
-        #endregion
-    }
+
+		/// <summary>
+		/// 获取AccessToken
+		/// </summary>
+		/// <returns></returns>
+		public AccessToken GetAccessToken()
+		{
+			try
+			{
+				IRestRequest request = new RestRequest("cgi-bin/token", Method.GET);
+				request.AddQueryParameter("grant_type", "client_credential");
+				request.AddQueryParameter("appid", ConfigurationHelper.AppId);
+				request.AddQueryParameter("secret", ConfigurationHelper.AppSecret);
+
+				IRestResponse response = _client.Execute(request);
+				string content = response.Content;
+				if (content.Contains("access_token"))
+				{
+					return JsonConvert.DeserializeObject<AccessToken>(content);
+				}
+
+				throw new Exception("未能获取AccessToken");
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		#region 消息模板
+		/// <summary>
+		/// 获取小程序模板库标题列表
+		/// </summary>
+		/// <param name="accessToken"></param>
+		/// <param name="offset"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public TemplateTitleList GetTemplateTitleList(string accessToken, int offset, int count)
+		{
+			try
+			{
+				if(string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if(offset < 0)
+				{
+					throw new ArgumentOutOfRangeException($"offset: {offset}值不合法");
+				}
+				if(count < 0 || count > 20)
+				{
+					throw new ArgumentOutOfRangeException($"count: {count}值不合法");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/wxopen/template/library/list", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					offset = offset,
+					count = count
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<TemplateTitleList>(response.Content);
+			}
+			catch(Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 获取模板库某个模板标题下关键词库
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public KeywordList GetKeywordList(string accessToken, string id)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if(string.IsNullOrEmpty(id))
+				{
+					throw new ArgumentNullException("id为空");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/wxopen/template/library/get", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					id = id
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<KeywordList>(response.Content);
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 组合模板并添加至帐号下的个人模板库
+		/// </summary>
+		/// <param name="accessToken"></param>
+		/// <param name="id"></param>
+		/// <param name="keywordIds"></param>
+		/// <returns></returns>
+		public TemplateAdd AddTemplate(string accessToken, string id, int[] keywordIds)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if (string.IsNullOrEmpty(id))
+				{
+					throw new ArgumentNullException("id为空");
+				}
+				if(keywordIds == null || keywordIds.Length == 0)
+				{
+					throw new ArgumentException("Keyword id列表为空");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/wxopen/template/add", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					id = id,
+					keyword_id_list = keywordIds
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<TemplateAdd>(response.Content);
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 获取帐号下已存在的模板列表
+		/// </summary>
+		/// <param name="accessToken"></param>
+		/// <param name="offset"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public TemplateList GetTemplateList(string accessToken, int offset, int count)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if (offset < 0)
+				{
+					throw new ArgumentOutOfRangeException($"offset: {offset}值不合法");
+				}
+				if (count < 0 || count > 20)
+				{
+					throw new ArgumentOutOfRangeException($"count: {count}值不合法");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/wxopen/template/list", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					offset = offset,
+					count = count
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<TemplateList>(response.Content);
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 删除账号下某个模板
+		/// </summary>
+		/// <param name="accessToken"></param>
+		/// <param name="templateId"></param>
+		/// <returns></returns>
+		public TemplateBase DeleteTemplate(string accessToken, string templateId)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if(string.IsNullOrEmpty(templateId))
+				{
+					throw new ArgumentNullException("TemplateId为空");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/wxopen/template/del", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					template_id = templateId
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<TemplateBase>(response.Content);
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+
+		/// <summary>
+		/// 发送模板消息
+		/// </summary>
+		/// <param name="accessToken"></param>
+		/// <param name="userOpenId"></param>
+		/// <param name="templateId"></param>
+		/// <param name="page"></param>
+		/// <param name="formId"></param>
+		/// <param name="data"></param>
+		/// <param name="color"></param>
+		/// <param name="emphasisKeyword"></param>
+		/// <returns></returns>
+		public TemplateBase SendTemplate(string accessToken, string userOpenId, string templateId, string page, string formId, string data, string color, string emphasisKeyword)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new ArgumentNullException("AccessToken为空");
+				}
+				if(string.IsNullOrEmpty(userOpenId))
+				{
+					throw new ArgumentNullException("OpenId为空");
+				}
+				if (string.IsNullOrEmpty(templateId))
+				{
+					throw new ArgumentNullException("TemplateId为空");
+				}
+				if(string.IsNullOrEmpty(formId))
+				{
+					throw new ArgumentNullException("FormId为空");
+				}
+				if(string.IsNullOrEmpty(data))
+				{
+					throw new ArgumentNullException("Data为空");
+				}
+
+				IRestRequest request = new RestRequest("cgi-bin/message/wxopen/template/send", Method.POST);
+				request.AddQueryParameter("access_token", accessToken);
+				request.AddJsonBody(new
+				{
+					touser = userOpenId,
+					template_id = templateId,
+					page = page,
+					form_id = formId,
+					data = data,
+					emphasis_keyword = emphasisKeyword
+				});
+
+				IRestResponse response = _client.Execute(request);
+				return JsonConvert.DeserializeObject<TemplateBase>(response.Content);
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				throw ex;
+			}
+		}
+		#endregion
+		#endregion
+	}
 }
