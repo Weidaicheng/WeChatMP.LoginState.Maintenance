@@ -44,6 +44,8 @@
     <Compile Include="Redis\OpenId.cs" />
     <Compile Include="Request\KeywordListRequest.cs" />
     <Compile Include="Request\TemplateListRequest.cs" />
+    <Compile Include="Response\KeywordResponse.cs" />
+    <Compile Include="Response\TemplateTitleResponse.cs" />
     <Compile Include="WeChat\AccessToken.cs" />
     <Compile Include="Request\LoginRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

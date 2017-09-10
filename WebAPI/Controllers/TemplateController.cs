@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ResponseResult<TemplateTitleList> GetTemplateTitleList([FromBody]TemplateListRequest model)
+		public ResponseResult<TemplateTitleResponse> GetTemplateTitleList([FromBody]TemplateListRequest model)
 		{
 			try
 			{
@@ -53,17 +53,21 @@ namespace WebAPI.Controllers
 				TemplateTitleList templateList = _weChatServiceHandler.GetTemplateTitleList(accessTokenStr, model.Offset, model.Count);
 				if (templateList.errcode == 0)
 				{
-					return new ResponseResult<TemplateTitleList>()
+					return new ResponseResult<TemplateTitleResponse>()
 					{
 						ErrCode = 0,
 						ErrMsg = "success",
-						Data = templateList
+						Data = new TemplateTitleResponse()
+						{
+							list = templateList.list,
+							total_count = templateList.total_count
+						}
 					}; 
 				}
 				else
 				{
 					logger.Error(templateList.errmsg);
-					return new ResponseResult<TemplateTitleList>()
+					return new ResponseResult<TemplateTitleResponse>()
 					{
 						ErrCode = 1001,
 						ErrMsg = templateList.errmsg,
@@ -74,7 +78,7 @@ namespace WebAPI.Controllers
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				return new ResponseResult<TemplateTitleList>()
+				return new ResponseResult<TemplateTitleResponse>()
 				{
 					ErrCode = 1003,
 					ErrMsg = ex.Message,
@@ -89,7 +93,7 @@ namespace WebAPI.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ResponseResult<List<Keyword>> GetKeywordList([FromBody]KeywordListRequest model)
+		public ResponseResult<KeywordResponse> GetKeywordList([FromBody]KeywordListRequest model)
 		{
 			try
 			{
@@ -103,17 +107,22 @@ namespace WebAPI.Controllers
 				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(accessTokenStr, model.Id);
 				if (keywordList.errcode == 0)
 				{
-					return new ResponseResult<List<Keyword>>()
+					return new ResponseResult<KeywordResponse>()
 					{
 						ErrCode = 0,
 						ErrMsg = "success",
-						Data = keywordList.keyword_list.ToList()
+						Data = new KeywordResponse()
+						{
+							id = keywordList.id,
+							title = keywordList.title,
+							keyword_list = keywordList.keyword_list
+						}
 					};
 				}
 				else
 				{
 					logger.Error(keywordList.errmsg);
-					return new ResponseResult<List<Keyword>>()
+					return new ResponseResult<KeywordResponse>()
 					{
 						ErrCode = 1001,
 						ErrMsg = keywordList.errmsg,
@@ -124,7 +133,7 @@ namespace WebAPI.Controllers
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				return new ResponseResult<List<Keyword>>()
+				return new ResponseResult<KeywordResponse>()
 				{
 					ErrCode = 1003,
 					ErrMsg = ex.Message,
