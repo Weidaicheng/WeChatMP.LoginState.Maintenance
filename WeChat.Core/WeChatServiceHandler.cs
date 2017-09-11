@@ -4,6 +4,7 @@ using NLog;
 using RestSharp;
 using System;
 using Model.WeChat;
+using Model.Request;
 
 namespace WeChat.Core
 {
@@ -294,15 +295,9 @@ namespace WeChat.Core
 		/// 发送模板消息
 		/// </summary>
 		/// <param name="accessToken"></param>
-		/// <param name="userOpenId"></param>
-		/// <param name="templateId"></param>
-		/// <param name="page"></param>
-		/// <param name="formId"></param>
-		/// <param name="data"></param>
-		/// <param name="color"></param>
-		/// <param name="emphasisKeyword"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
-		public Error SendTemplate(string accessToken, string userOpenId, string templateId, string page, string formId, string data, string color, string emphasisKeyword)
+		public Error SendTemplate(string accessToken, TemplateSendRequest model)
 		{
 			try
 			{
@@ -310,19 +305,23 @@ namespace WeChat.Core
 				{
 					throw new ArgumentNullException("AccessToken为空");
 				}
-				if(string.IsNullOrEmpty(userOpenId))
+				if(model == null)
+				{
+					throw new ArgumentNullException("消息参数为空");
+				}
+				if(string.IsNullOrEmpty(model.ToUser))
 				{
 					throw new ArgumentNullException("OpenId为空");
 				}
-				if (string.IsNullOrEmpty(templateId))
+				if (string.IsNullOrEmpty(model.TemplateId))
 				{
 					throw new ArgumentNullException("TemplateId为空");
 				}
-				if(string.IsNullOrEmpty(formId))
+				if(string.IsNullOrEmpty(model.FormId))
 				{
 					throw new ArgumentNullException("FormId为空");
 				}
-				if(string.IsNullOrEmpty(data))
+				if(string.IsNullOrEmpty(model.FormId))
 				{
 					throw new ArgumentNullException("Data为空");
 				}
@@ -331,12 +330,12 @@ namespace WeChat.Core
 				request.AddQueryParameter("access_token", accessToken);
 				request.AddJsonBody(new
 				{
-					touser = userOpenId,
-					template_id = templateId,
-					page = page,
-					form_id = formId,
-					data = data,
-					emphasis_keyword = emphasisKeyword
+					touser = model.ToUser,
+					template_id = model.TemplateId,
+					page = model.Page,
+					form_id = model.FormId,
+					data = model.Data,
+					emphasis_keyword = model.EmphasisKeyword
 				});
 
 				IRestResponse response = _client.Execute(request);

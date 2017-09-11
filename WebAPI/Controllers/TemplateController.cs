@@ -294,5 +294,55 @@ namespace WebAPI.Controllers
 				};
 			}
 		}
+
+		/// <summary>
+		/// 发送模板消息
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ResponseResult<object> SendTemplate([FromBody]TemplateSendRequest model)
+		{
+			try
+			{
+				string accessTokenStr = _redisHandler.GetAccessToken();
+				if (string.IsNullOrEmpty(accessTokenStr))
+				{
+					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+					_redisHandler.SaveAccessToken(accessTokenStr);
+				}
+
+				Error error = _weChatServiceHandler.SendTemplate(accessTokenStr, model);
+				if (error.errcode == 0)
+				{
+					return new ResponseResult<object>()
+					{
+						ErrCode = 0,
+						ErrMsg = "success",
+						Data = null
+					};
+				}
+				else
+				{
+					logger.Error(error.errmsg);
+					return new ResponseResult<object>()
+					{
+						ErrCode = 1001,
+						ErrMsg = error.errmsg,
+						Data = null
+					};
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				return new ResponseResult<object>()
+				{
+					ErrCode = 1003,
+					ErrMsg = ex.Message,
+					Data = null
+				};
+			}
+		}
 	}
 }

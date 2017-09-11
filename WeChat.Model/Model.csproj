@@ -46,6 +46,7 @@
     <Compile Include="Request\TemplateAddRequest.cs" />
     <Compile Include="Request\TemplateDeleteRequest.cs" />
     <Compile Include="Request\TemplateListRequest.cs" />
+    <Compile Include="Request\TemplateSendRequest.cs" />
     <Compile Include="Request\TemplateTitleListRequest.cs" />
     <Compile Include="Response\KeywordResponse.cs" />
     <Compile Include="Response\TemplateResponse.cs" />
