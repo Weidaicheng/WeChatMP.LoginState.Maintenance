@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ResponseResult<TemplateTitleResponse> GetTemplateTitleList([FromBody]TemplateListRequest model)
+		public ResponseResult<TemplateTitleResponse> GetTemplateTitleList([FromBody]TemplateTitleListRequest model)
 		{
 			try
 			{
@@ -50,8 +50,8 @@ namespace WebAPI.Controllers
 					_redisHandler.SaveAccessToken(accessTokenStr);
 				}
 
-				TemplateTitleList templateList = _weChatServiceHandler.GetTemplateTitleList(accessTokenStr, model.Offset, model.Count);
-				if (templateList.errcode == 0)
+				TemplateTitleList templateTitleList = _weChatServiceHandler.GetTemplateTitleList(accessTokenStr, model.Offset, model.Count);
+				if (templateTitleList.errcode == 0)
 				{
 					return new ResponseResult<TemplateTitleResponse>()
 					{
@@ -59,18 +59,18 @@ namespace WebAPI.Controllers
 						ErrMsg = "success",
 						Data = new TemplateTitleResponse()
 						{
-							list = templateList.list,
-							total_count = templateList.total_count
+							list = templateTitleList.list,
+							total_count = templateTitleList.total_count
 						}
 					}; 
 				}
 				else
 				{
-					logger.Error(templateList.errmsg);
+					logger.Error(templateTitleList.errmsg);
 					return new ResponseResult<TemplateTitleResponse>()
 					{
 						ErrCode = 1001,
-						ErrMsg = templateList.errmsg,
+						ErrMsg = templateTitleList.errmsg,
 						Data = null
 					};
 				}
@@ -191,5 +191,108 @@ namespace WebAPI.Controllers
                 };
             }
         }
-    }
+
+		/// <summary>
+		/// 获取帐号下已存在的模板列表
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ResponseResult<TemplateResponse> GetTemplateList([FromBody]TemplateListRequest model)
+		{
+			try
+			{
+				string accessTokenStr = _redisHandler.GetAccessToken();
+				if (string.IsNullOrEmpty(accessTokenStr))
+				{
+					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+					_redisHandler.SaveAccessToken(accessTokenStr);
+				}
+
+				TemplateList templateList = _weChatServiceHandler.GetTemplateList(accessTokenStr, model.Offset, model.Count);
+				if (templateList.errcode == 0)
+				{
+					return new ResponseResult<TemplateResponse>()
+					{
+						ErrCode = 0,
+						ErrMsg = "success",
+						Data = new TemplateResponse()
+						{
+							list = templateList.list
+						}
+					};
+				}
+				else
+				{
+					logger.Error(templateList.errmsg);
+					return new ResponseResult<TemplateResponse>()
+					{
+						ErrCode = 1001,
+						ErrMsg = templateList.errmsg,
+						Data = null
+					};
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				return new ResponseResult<TemplateResponse>()
+				{
+					ErrCode = 1003,
+					ErrMsg = ex.Message,
+					Data = null
+				};
+			}
+		}
+
+		/// <summary>
+		/// 删除账号下某个模板
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ResponseResult<object> DeleteTemplate([FromBody]TemplateDeleteRequest model)
+		{
+			try
+			{
+				string accessTokenStr = _redisHandler.GetAccessToken();
+				if (string.IsNullOrEmpty(accessTokenStr))
+				{
+					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
+					_redisHandler.SaveAccessToken(accessTokenStr);
+				}
+
+				Error error = _weChatServiceHandler.DeleteTemplate(accessTokenStr, model.TemplateId);
+				if (error.errcode == 0)
+				{
+					return new ResponseResult<object>()
+					{
+						ErrCode = 0,
+						ErrMsg = "success",
+						Data = null
+					};
+				}
+				else
+				{
+					logger.Error(error.errmsg);
+					return new ResponseResult<object>()
+					{
+						ErrCode = 1001,
+						ErrMsg = error.errmsg,
+						Data = null
+					};
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex);
+				return new ResponseResult<object>()
+				{
+					ErrCode = 1003,
+					ErrMsg = ex.Message,
+					Data = null
+				};
+			}
+		}
+	}
 }
