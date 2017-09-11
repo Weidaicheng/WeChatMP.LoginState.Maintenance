@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeChat.Core", "WeChat.Core\WeChat.Core.csproj", "{D55BB228-84D1-477F-89EC-66DA2A504BE6}"
 EndProject
@@ -27,6 +27,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{97
 	ProjectSection(SolutionItems) = preProject
 		ErrCode.txt = ErrCode.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Model", "Todo.Model\Todo.Model.csproj", "{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Todo", "Todo", "{BA3C02B4-922D-433E-82F5-58B6836863E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.DAL", "Todo.DAL\Todo.DAL.csproj", "{503EF84D-5758-416E-8A06-21FC7560DCFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +60,14 @@ Global
 		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FA14FF7-715F-483D-ADB0-ED515C5432DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{503EF84D-5758-416E-8A06-21FC7560DCFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{503EF84D-5758-416E-8A06-21FC7560DCFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{503EF84D-5758-416E-8A06-21FC7560DCFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{503EF84D-5758-416E-8A06-21FC7560DCFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +78,8 @@ Global
 		{63F4E736-F4D6-49CE-A995-AFD9DE71E417} = {804E8737-FD50-480F-852D-CEC313FE4079}
 		{59DC450F-3C03-44DE-8919-496821BFD4B6} = {9B6C2303-8579-412C-A2E5-06CDC9184C86}
 		{3FA14FF7-715F-483D-ADB0-ED515C5432DD} = {989E1414-C983-4794-A105-CEFD6F7B0880}
+		{BA96EDFA-BEE8-42CC-862B-CF8F1ED4B333} = {BA3C02B4-922D-433E-82F5-58B6836863E1}
+		{503EF84D-5758-416E-8A06-21FC7560DCFF} = {BA3C02B4-922D-433E-82F5-58B6836863E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C3D03D85-28F2-4DDD-8B64-1758F39B4EE4}
