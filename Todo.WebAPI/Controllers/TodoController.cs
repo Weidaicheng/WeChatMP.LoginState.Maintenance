@@ -55,27 +55,27 @@ namespace Todo.WebAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// 用户是否存在
-        /// </summary>
-        /// <param name="todoUserId"></param>
-        /// <returns></returns>
-        private bool isUserExists(Guid todoUserId)
-        {
-            try
-            {
-                int count = (from u in _todoContext.TodoUsers
-                             where u.TodoUserId == todoUserId
-                             select u).Count();
+        ///// <summary>
+        ///// 用户是否存在
+        ///// </summary>
+        ///// <param name="todoUserId"></param>
+        ///// <returns></returns>
+        //private bool isUserExists(Guid todoUserId)
+        //{
+        //    try
+        //    {
+        //        int count = (from u in _todoContext.TodoUsers
+        //                     where u.TodoUserId == todoUserId
+        //                     select u).Count();
 
-                return count != 0;
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex);
-                throw ex;
-            }
-        }
+        //        return count != 0;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        logger.Error(ex);
+        //        throw ex;
+        //    }
+        //}
 
         /// <summary>
         /// 注册
@@ -93,10 +93,11 @@ namespace Todo.WebAPI.Controllers
 
                 if(isOpenIdRegistered(openId))
                 {
+                    //该OpenId已经注册，同样返回success
                     return new ResponseResult<object>()
                     {
-                        ErrCode = 1002,
-                        ErrMsg = "用户已注册",
+                        ErrCode = 0,
+                        ErrMsg = "success",
                         Data = null
                     };
                 }
@@ -126,71 +127,63 @@ namespace Todo.WebAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// 通过OpenId换取TodoUserId
-        /// </summary>
-        /// <param name="openId"></param>
-        /// <returns></returns>
-        public ResponseResult<Guid?> GetTodoUserId(string openId)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(openId))
-                {
-                    throw new ArgumentNullException("OpenId为空");
-                }
+        ///// <summary>
+        ///// 通过OpenId换取TodoUserId
+        ///// </summary>
+        ///// <param name="openId"></param>
+        ///// <returns></returns>
+        //public ResponseResult<Guid?> GetTodoUserId(string openId)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(openId))
+        //        {
+        //            throw new ArgumentNullException("OpenId为空");
+        //        }
 
-                if (!isOpenIdRegistered(openId))
-                {
-                    return new ResponseResult<Guid?>()
-                    {
-                        ErrCode = 1003,
-                        ErrMsg = "用户未注册",
-                        Data = null
-                    };
-                }
+        //        if (!isOpenIdRegistered(openId))
+        //        {
+        //            return new ResponseResult<Guid?>()
+        //            {
+        //                ErrCode = 1003,
+        //                ErrMsg = "用户未注册",
+        //                Data = null
+        //            };
+        //        }
 
-                var todoUser = _todoContext.TodoUsers.FirstOrDefault(x => x.OpenId == openId);
-                return new ResponseResult<Guid?>()
-                {
-                    ErrCode = 0,
-                    ErrMsg = "success",
-                    Data = todoUser.TodoUserId
-                };
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
-                return new ResponseResult<Guid?>()
-                {
-                    ErrCode = 1001,
-                    ErrMsg = ex.Message,
-                    Data = null
-                };
-            }
-        }
+        //        var todoUser = _todoContext.TodoUsers.FirstOrDefault(x => x.OpenId == openId);
+        //        return new ResponseResult<Guid?>()
+        //        {
+        //            ErrCode = 0,
+        //            ErrMsg = "success",
+        //            Data = todoUser.TodoUserId
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex);
+        //        return new ResponseResult<Guid?>()
+        //        {
+        //            ErrCode = 1001,
+        //            ErrMsg = ex.Message,
+        //            Data = null
+        //        };
+        //    }
+        //}
         #endregion
 
         #region Todo
         /// <summary>
         /// 获取今日Todo
         /// </summary>
-        /// <param name="todoUserId"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public ResponseResult<List<TodoViewModel>> GetTodayTodos(Guid todoUserId)
+        [HttpPost]
+        public ResponseResult<List<TodoViewModel>> GetTodayTodos([FromBody]RequestBase model)
         {
             try
             {
-                if(!isUserExists(todoUserId))
-                {
-                    return new ResponseResult<List<TodoViewModel>>()
-                    {
-                        ErrCode = 1003,
-                        ErrMsg = "用户不存在",
-                        Data = null
-                    };
-                }
-
+                //todo: 登录接口使用model.UserId获取OpenId
                 List<Models.Todo> todos = (from t in _todoContext.Todos
                                            where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) == 0
                                            select t).ToList();
@@ -232,22 +225,14 @@ namespace Todo.WebAPI.Controllers
         /// <summary>
         /// 获取3日Todo
         /// </summary>
-        /// <param name="todoUserId"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public ResponseResult<List<TodoViewModel>> GetThreeDayTodos(Guid todoUserId)
+        [HttpPost]
+        public ResponseResult<List<TodoViewModel>> GetThreeDayTodos([FromBody]RequestBase model)
         {
             try
             {
-                if (!isUserExists(todoUserId))
-                {
-                    return new ResponseResult<List<TodoViewModel>>()
-                    {
-                        ErrCode = 1003,
-                        ErrMsg = "用户不存在",
-                        Data = null
-                    };
-                }
-
+                //todo: 登录接口使用model.UserId获取OpenId
                 List<Models.Todo> todos = (from t in _todoContext.Todos
                                            where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 1 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 3
                                            select t).ToList();
@@ -289,22 +274,14 @@ namespace Todo.WebAPI.Controllers
         /// <summary>
         /// 获取7日Todo
         /// </summary>
-        /// <param name="todoUserId"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public ResponseResult<List<TodoViewModel>> GetSevenDayTodos(Guid todoUserId)
+        [HttpPost]
+        public ResponseResult<List<TodoViewModel>> GetSevenDayTodos([FromBody]RequestBase model)
         {
             try
             {
-                if (!isUserExists(todoUserId))
-                {
-                    return new ResponseResult<List<TodoViewModel>>()
-                    {
-                        ErrCode = 1003,
-                        ErrMsg = "用户不存在",
-                        Data = null
-                    };
-                }
-
+                //todo: 登录接口使用model.UserId获取OpenId
                 List<Models.Todo> todos = (from t in _todoContext.Todos
                                            where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 3 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 7
                                            select t).ToList();
@@ -346,22 +323,14 @@ namespace Todo.WebAPI.Controllers
         /// <summary>
         /// 获取更多Todo
         /// </summary>
-        /// <param name="todoUserId"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public ResponseResult<List<TodoViewModel>> GetAfterSevenDayTodos(Guid todoUserId)
+        [HttpPost]
+        public ResponseResult<List<TodoViewModel>> GetAfterSevenDayTodos([FromBody]RequestBase model)
         {
             try
             {
-                if (!isUserExists(todoUserId))
-                {
-                    return new ResponseResult<List<TodoViewModel>>()
-                    {
-                        ErrCode = 1003,
-                        ErrMsg = "用户不存在",
-                        Data = null
-                    };
-                }
-
+                //todo: 登录接口使用model.UserId获取OpenId
                 List<Models.Todo> todos = (from t in _todoContext.Todos
                                            where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 7
                                            select t).ToList();

@@ -206,6 +206,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\RequestBase.cs" />
     <Compile Include="Models\ResponseResult.cs" />
     <Compile Include="Models\Todo.cs" />
     <Compile Include="Models\TodoContext.cs" />
