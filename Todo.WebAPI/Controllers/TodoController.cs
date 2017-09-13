@@ -1,6 +1,9 @@
-﻿using NLog;
+﻿using Newtonsoft.Json;
+using NLog;
+using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -14,6 +17,7 @@ namespace Todo.WebAPI.Controllers
     {
         #region field
         private readonly TodoContext _todoContext;
+        private readonly IRestClient _client;
         #endregion
 
         #region Log
@@ -21,9 +25,11 @@ namespace Todo.WebAPI.Controllers
         #endregion
 
         #region .ctor
-        public TodoController(TodoContext todoContext)
+        public TodoController(TodoContext todoContext, RestClient client)
         {
             _todoContext = todoContext;
+            _client = client;
+            _client.BaseUrl = new Uri(ConfigurationManager.AppSettings["LoginApi"]);
         }
         #endregion
 
@@ -183,9 +189,25 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                //todo: 登录接口使用model.UserId获取OpenId
+                //登录接口使用model.UserId获取OpenId
+                IRestRequest request = new RestRequest("/GetOpenId", Method.POST);
+                request.AddJsonBody(model);
+
+                IRestResponse response = _client.Execute(request);
+                var result = JsonConvert.DeserializeObject<ResponseResult<OpenId>>(response.Content);
+                if(result.ErrCode != 0)
+                {
+                    logger.Error(result.ErrMsg);
+                    return new ResponseResult<List<TodoViewModel>>()
+                    {
+                        ErrCode = 1002,
+                        ErrMsg = result.ErrMsg,
+                        Data = null
+                    };
+                }
+
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) == 0
+                                           where t.TodoUser.OpenId == result.Data.openid && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) == 0
                                            select t).ToList();
                 List<TodoViewModel> todoVMs = new List<TodoViewModel>();
                 foreach(var item in todos)
@@ -232,9 +254,25 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                //todo: 登录接口使用model.UserId获取OpenId
+                //登录接口使用model.UserId获取OpenId
+                IRestRequest request = new RestRequest("/GetOpenId", Method.POST);
+                request.AddJsonBody(model);
+
+                IRestResponse response = _client.Execute(request);
+                var result = JsonConvert.DeserializeObject<ResponseResult<OpenId>>(response.Content);
+                if (result.ErrCode != 0)
+                {
+                    logger.Error(result.ErrMsg);
+                    return new ResponseResult<List<TodoViewModel>>()
+                    {
+                        ErrCode = 1002,
+                        ErrMsg = result.ErrMsg,
+                        Data = null
+                    };
+                }
+
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 1 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 3
+                                           where t.TodoUser.OpenId == result.Data.openid && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 1 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 3
                                            select t).ToList();
                 List<TodoViewModel> todoVMs = new List<TodoViewModel>();
                 foreach (var item in todos)
@@ -281,9 +319,25 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                //todo: 登录接口使用model.UserId获取OpenId
+                //登录接口使用model.UserId获取OpenId
+                IRestRequest request = new RestRequest("/GetOpenId", Method.POST);
+                request.AddJsonBody(model);
+
+                IRestResponse response = _client.Execute(request);
+                var result = JsonConvert.DeserializeObject<ResponseResult<OpenId>>(response.Content);
+                if (result.ErrCode != 0)
+                {
+                    logger.Error(result.ErrMsg);
+                    return new ResponseResult<List<TodoViewModel>>()
+                    {
+                        ErrCode = 1002,
+                        ErrMsg = result.ErrMsg,
+                        Data = null
+                    };
+                }
+
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 3 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 7
+                                           where t.TodoUser.OpenId == result.Data.openid && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 3 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 7
                                            select t).ToList();
                 List<TodoViewModel> todoVMs = new List<TodoViewModel>();
                 foreach (var item in todos)
@@ -330,9 +384,25 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                //todo: 登录接口使用model.UserId获取OpenId
+                //登录接口使用model.UserId获取OpenId
+                IRestRequest request = new RestRequest("/GetOpenId", Method.POST);
+                request.AddJsonBody(model);
+
+                IRestResponse response = _client.Execute(request);
+                var result = JsonConvert.DeserializeObject<ResponseResult<OpenId>>(response.Content);
+                if (result.ErrCode != 0)
+                {
+                    logger.Error(result.ErrMsg);
+                    return new ResponseResult<List<TodoViewModel>>()
+                    {
+                        ErrCode = 1002,
+                        ErrMsg = result.ErrMsg,
+                        Data = null
+                    };
+                }
+
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == todoUserId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 7
+                                           where t.TodoUser.OpenId == result.Data.openid && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 7
                                            select t).ToList();
                 List<TodoViewModel> todoVMs = new List<TodoViewModel>();
                 foreach (var item in todos)

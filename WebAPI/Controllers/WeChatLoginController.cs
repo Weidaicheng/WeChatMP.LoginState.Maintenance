@@ -150,6 +150,96 @@ namespace WebAPI.Controllers
                 };
             }
         }
+
+        /// <summary>
+        /// 通过UserId换取OpenId
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResponseResult<string> GetOpenId(RequestBase model)
+        {
+            try
+            {
+                if(model.UserId == null)
+                {
+                    throw new ArgumentNullException("UserId为空");
+                }
+
+                var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                if(openId == null)
+                {
+                    return new ResponseResult<string>()
+                    {
+                        ErrCode = 1005,
+                        ErrMsg = "UserId不存在，请重新登录",
+                        Data = null
+                    };
+                }
+
+                return new ResponseResult<string>()
+                {
+                    ErrCode = 0,
+                    ErrMsg = "success",
+                    Data = openId.openid
+                };
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+                return new ResponseResult<string>()
+                {
+                    ErrCode = 1003,
+                    ErrMsg = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        /// <summary>
+        /// 通过UserId获取UnionId
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResponseResult<string> GetUnionId(RequestBase model)
+        {
+            try
+            {
+                if (model.UserId == null)
+                {
+                    throw new ArgumentNullException("UserId为空");
+                }
+
+                var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                if (openId == null)
+                {
+                    return new ResponseResult<string>()
+                    {
+                        ErrCode = 1005,
+                        ErrMsg = "UserId不存在，请重新登录",
+                        Data = null
+                    };
+                }
+
+                return new ResponseResult<string>()
+                {
+                    ErrCode = 0,
+                    ErrMsg = "success",
+                    Data = openId.unionid
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return new ResponseResult<string>()
+                {
+                    ErrCode = 1003,
+                    ErrMsg = ex.Message,
+                    Data = null
+                };
+            }
+        }
         #endregion
     }
 }
