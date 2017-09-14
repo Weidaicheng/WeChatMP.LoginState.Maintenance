@@ -8,8 +8,8 @@ namespace Todo.WebAPI.Models
     public class RequestBase
     {
         /// <summary>
-        /// 用户Id
+        /// Token
         /// </summary>
-        public Guid? UserId { get; set; }
+        public string Token { get; set; }
     }
 }
