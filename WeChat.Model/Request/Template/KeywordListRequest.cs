@@ -1,4 +1,4 @@
-﻿namespace Model.Request
+﻿namespace Model.Request.Template
 {
 	public class KeywordListRequest
 	{

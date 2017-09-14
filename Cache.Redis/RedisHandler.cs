@@ -42,13 +42,13 @@ namespace Cache.Redis
 
                 RedisOpenId model = new RedisOpenId()
                 {
-                    UserId = Guid.NewGuid(),
+                    Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                     openid = openId.openid,
                     session_key = openId.session_key,
                     unionid = openId.unionid
                 };
 
-                db.ObjectSet(model.UserId.ToString(), model, TimeSpan.FromDays(ConfigurationHelper.ExpireDays.Value).Ticks);
+                db.ObjectSet(model.Token, model, TimeSpan.FromDays(ConfigurationHelper.ExpireDays.Value).Ticks);
                 return model;
             }
             catch (Exception ex)
@@ -59,17 +59,17 @@ namespace Cache.Redis
         }
 
         /// <summary>
-        /// 通过ID获取OpenId
+        /// 通过Token获取OpenId
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public RedisOpenId GetSavedOpenId(Guid id)
+        public RedisOpenId GetSavedOpenId(string token)
         {
             try
             {
                 var db = Connection.GetDatabase();
 
-                RedisOpenId savedOpenId = db.ObjectGet<RedisOpenId>(id.ToString());
+                RedisOpenId savedOpenId = db.ObjectGet<RedisOpenId>(token);
                 return savedOpenId;
             }
             catch (Exception ex)

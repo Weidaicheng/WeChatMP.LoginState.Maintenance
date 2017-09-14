@@ -1,4 +1,4 @@
-﻿namespace Model.Request
+﻿namespace Model.Request.Login
 {
 	/// <summary>
 	/// 登录请求数据类

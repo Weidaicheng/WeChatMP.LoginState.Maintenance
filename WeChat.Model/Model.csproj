@@ -42,17 +42,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Redis\OpenId.cs" />
-    <Compile Include="Request\KeywordListRequest.cs" />
-    <Compile Include="Request\TemplateAddRequest.cs" />
-    <Compile Include="Request\TemplateDeleteRequest.cs" />
-    <Compile Include="Request\TemplateListRequest.cs" />
-    <Compile Include="Request\TemplateSendRequest.cs" />
-    <Compile Include="Request\TemplateTitleListRequest.cs" />
+    <Compile Include="Request\Template\KeywordListRequest.cs" />
+    <Compile Include="Request\Template\TemplateAddRequest.cs" />
+    <Compile Include="Request\Template\TemplateDeleteRequest.cs" />
+    <Compile Include="Request\Template\TemplateListRequest.cs" />
+    <Compile Include="Request\Template\TemplateSendRequest.cs" />
+    <Compile Include="Request\Template\TemplateTitleListRequest.cs" />
     <Compile Include="Response\KeywordResponse.cs" />
     <Compile Include="Response\TemplateResponse.cs" />
     <Compile Include="Response\TemplateTitleResponse.cs" />
     <Compile Include="WeChat\AccessToken.cs" />
-    <Compile Include="Request\LoginRequest.cs" />
+    <Compile Include="Request\Login\LoginRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\RequestBase.cs" />
     <Compile Include="Response\ResponseResult.cs" />

@@ -13,6 +13,7 @@ using Model.Response;
 using RedisOpenId = Model.Redis.OpenId;
 using WeChatOpenId = Model.WeChat.OpenId;
 using Model.WeChat;
+using Model.Request.Login;
 
 namespace WebAPI.Controllers
 {
@@ -42,17 +43,17 @@ namespace WebAPI.Controllers
         /// <param name="code"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResponseResult<Guid?> Login([FromBody]LoginRequest model)
+        public ResponseResult<string> Login([FromBody]LoginRequest model)
         {
             try
             {
-                if(model.UserId == null)
+                if(model.Token == null)
                 {
                     //直接调用微信接口登录
                     //检查Code
                     if (string.IsNullOrEmpty(model.Code))
                     {
-                        return new ResponseResult<Guid?>()
+                        return new ResponseResult<string>()
                         {
                             ErrCode = 1002,
                             ErrMsg = "Code为空",
@@ -65,18 +66,18 @@ namespace WebAPI.Controllers
                     {
                         var openId = result as WeChatOpenId;
                         var redisOpenId = _redisHandler.SaveOpenId(openId);
-                        return new ResponseResult<Guid?>()
+                        return new ResponseResult<string>()
                         {
                             ErrCode = 0,
                             ErrMsg = "Success",
-                            Data = redisOpenId.UserId
+                            Data = redisOpenId.Token
                         };
                     }
                     else
                     {
                         var error = result as Error;
                         logger.Error(error.errmsg);
-                        return new ResponseResult<Guid?>()
+                        return new ResponseResult<string>()
                         {
                             ErrCode = 1001,
                             ErrMsg = "获取OpenId失败",
@@ -87,14 +88,14 @@ namespace WebAPI.Controllers
                 else
                 {
                     //检查缓存中OpenId是否过期
-                    var redisOpenId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                    var redisOpenId = _redisHandler.GetSavedOpenId(model.Token);
                     if(redisOpenId == null)
                     {
                         //OpenId已过期，重新调用微信接口登录
                         //检查Code
                         if (string.IsNullOrEmpty(model.Code))
                         {
-                            return new ResponseResult<Guid?>()
+                            return new ResponseResult<string>()
                             {
                                 ErrCode = 1002,
                                 ErrMsg = "Code为空",
@@ -107,18 +108,18 @@ namespace WebAPI.Controllers
                         {
                             var openId = result as WeChatOpenId;
                             var redisOpenIdSaved = _redisHandler.SaveOpenId(openId);
-                            return new ResponseResult<Guid?>()
+                            return new ResponseResult<string>()
                             {
                                 ErrCode = 0,
                                 ErrMsg = "Success",
-                                Data = redisOpenIdSaved.UserId
+                                Data = redisOpenIdSaved.Token
                             };
                         }
                         else
                         {
                             var error = result as Error;
                             logger.Error(error.errmsg);
-                            return new ResponseResult<Guid?>()
+                            return new ResponseResult<string>()
                             {
                                 ErrCode = 1001,
                                 ErrMsg = "获取OpenId失败",
@@ -130,11 +131,11 @@ namespace WebAPI.Controllers
                     {
                         //OpenId未过期
                         //返回用户Id
-                        return new ResponseResult<Guid?>()
+                        return new ResponseResult<string>()
                         {
                             ErrCode = 0,
                             ErrMsg = "Success",
-                            Data = redisOpenId.UserId
+                            Data = redisOpenId.Token
                         };
                     }
                 }
@@ -142,7 +143,7 @@ namespace WebAPI.Controllers
             catch(Exception ex)
             {
                 logger.Error(ex);
-                return new ResponseResult<Guid?>()
+                return new ResponseResult<string>()
                 {
                     ErrCode = 1003,
                     ErrMsg = ex.Message,
@@ -152,7 +153,7 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// 通过UserId换取OpenId
+        /// 通过Token换取OpenId
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -161,12 +162,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                if(model.UserId == null)
+                if(model.Token == null)
                 {
                     throw new ArgumentNullException("UserId为空");
                 }
 
-                var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                var openId = _redisHandler.GetSavedOpenId(model.Token);
                 if(openId == null)
                 {
                     return new ResponseResult<string>()
@@ -197,7 +198,7 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// 通过UserId获取UnionId
+        /// 通过Token获取UnionId
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -206,12 +207,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                if (model.UserId == null)
+                if (model.Token == null)
                 {
                     throw new ArgumentNullException("UserId为空");
                 }
 
-                var openId = _redisHandler.GetSavedOpenId(model.UserId.Value);
+                var openId = _redisHandler.GetSavedOpenId(model.Token);
                 if (openId == null)
                 {
                     return new ResponseResult<string>()

@@ -4,7 +4,7 @@ using NLog;
 using RestSharp;
 using System;
 using Model.WeChat;
-using Model.Request;
+using Model.Request.Template;
 
 namespace WeChat.Core
 {

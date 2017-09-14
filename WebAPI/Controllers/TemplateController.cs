@@ -1,6 +1,6 @@
 ﻿using Cache.Redis;
 using Model;
-using Model.Request;
+using Model.Request.Template;
 using Model.Response;
 using Model.WeChat;
 using NLog;
