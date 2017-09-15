@@ -31,7 +31,6 @@ namespace WebAPI
             HttpConfiguration config = GlobalConfiguration.Configuration;
             var builder = new ContainerBuilder();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterType<WeChatLoginController>();
             builder.RegisterType<WeChatServiceHandler>();
 
             builder.RegisterType<RedisHandler>().As<RedisHandler>();

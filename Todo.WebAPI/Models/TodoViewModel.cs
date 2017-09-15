@@ -8,7 +8,6 @@ namespace Todo.WebAPI.Models
     public class TodoViewModel
     {
         public Guid TodoId { get; set; }
-        public Guid TodoUserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public bool UseAlert { get; set; }
