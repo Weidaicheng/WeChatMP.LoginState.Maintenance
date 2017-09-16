@@ -67,7 +67,7 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(openId))
+                if (string.IsNullOrEmpty(openId))
                 {
                     throw new ArgumentNullException("OpenId为空");
                 }
@@ -76,7 +76,7 @@ namespace Todo.WebAPI.Controllers
                             where !string.IsNullOrEmpty(u.OpenId) && u.OpenId == openId
                             select u).FirstOrDefault();
 
-                if(user == null)
+                if (user == null)
                 {
                     //未注册，进行注册
                     user = new TodoUser()
@@ -117,14 +117,14 @@ namespace Todo.WebAPI.Controllers
                 var todo = (from t in _todoContext.Todos
                             where t.TodoId == todoId
                             select t).FirstOrDefault();
-                if(todo != null && todo.TodoUser.TodoUserId == userId)
+                if (todo != null && todo.TodoUser.TodoUserId == userId)
                 {
                     return true;
                 }
 
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex);
                 throw;
@@ -162,9 +162,10 @@ namespace Todo.WebAPI.Controllers
                 DateTime begin = DateTime.Today;
                 DateTime end = DateTime.Today.AddDays(1);
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : (t.AlertTime >= begin && t.AlertTime < end)
+                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && t.AlertTime != null  && t.AlertTime >= begin && t.AlertTime < end
+                                           orderby t.AlertTime
                                            select t).ToList();
-                if(todos == null)
+                if (todos == null)
                 {
                     return new ResponseResult<List<TodoViewModel>>()
                     {
@@ -175,17 +176,16 @@ namespace Todo.WebAPI.Controllers
                 }
 
                 List<TodoViewModel> todoVMs = new List<TodoViewModel>();
-                foreach(var item in todos)
+                foreach (var item in todos)
                 {
                     todoVMs.Add(new TodoViewModel()
                     {
                         AlertBeforeMinutes = item.AlertBeforeMinutes,
-                        AlertTime = item.AlertTime,
-                        Content = item.Content,
-                        CreateTime = item.CreateTime,
+                        AlertDate = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = item.Content == null ? string.Empty : item.Content,
                         Title = item.Title,
                         TodoId = item.TodoId,
-                        UpdateTime = item.UpdateTime,
                         UseAlert = item.UseAlert
                     });
                 }
@@ -196,7 +196,7 @@ namespace Todo.WebAPI.Controllers
                     Data = todoVMs
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex);
                 return new ResponseResult<List<TodoViewModel>>()
@@ -236,7 +236,8 @@ namespace Todo.WebAPI.Controllers
                 DateTime begin = DateTime.Today.AddDays(1);
                 DateTime end = DateTime.Today.AddDays(4);
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false :  (t.AlertTime >= begin && t.AlertTime < end)
+                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && t.AlertTime != null && (t.AlertTime >= begin && t.AlertTime < end)
+                                           orderby t.AlertTime
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -254,12 +255,11 @@ namespace Todo.WebAPI.Controllers
                     todoVMs.Add(new TodoViewModel()
                     {
                         AlertBeforeMinutes = item.AlertBeforeMinutes,
-                        AlertTime = item.AlertTime,
-                        Content = item.Content,
-                        CreateTime = item.CreateTime,
+                        AlertDate = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = item.Content == null ? string.Empty : item.Content,
                         Title = item.Title,
                         TodoId = item.TodoId,
-                        UpdateTime = item.UpdateTime,
                         UseAlert = item.UseAlert
                     });
                 }
@@ -310,7 +310,8 @@ namespace Todo.WebAPI.Controllers
                 DateTime begin = DateTime.Today.AddDays(4);
                 DateTime end = DateTime.Today.AddDays(8);
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : (t.AlertTime >= begin && t.AlertTime < end)
+                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && t.AlertTime != null && (t.AlertTime >= begin && t.AlertTime < end)
+                                           orderby t.AlertTime
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -328,12 +329,11 @@ namespace Todo.WebAPI.Controllers
                     todoVMs.Add(new TodoViewModel()
                     {
                         AlertBeforeMinutes = item.AlertBeforeMinutes,
-                        AlertTime = item.AlertTime,
-                        Content = item.Content,
-                        CreateTime = item.CreateTime,
+                        AlertDate = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = item.Content == null ? string.Empty : item.Content,
                         Title = item.Title,
                         TodoId = item.TodoId,
-                        UpdateTime = item.UpdateTime,
                         UseAlert = item.UseAlert
                     });
                 }
@@ -383,7 +383,8 @@ namespace Todo.WebAPI.Controllers
 
                 DateTime begin = DateTime.Today.AddDays(8);
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? true : t.AlertTime.Value >= begin
+                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && t.AlertTime == null || t.AlertTime.Value >= begin
+                                           orderby t.AlertTime
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -401,12 +402,11 @@ namespace Todo.WebAPI.Controllers
                     todoVMs.Add(new TodoViewModel()
                     {
                         AlertBeforeMinutes = item.AlertBeforeMinutes,
-                        AlertTime = item.AlertTime,
-                        Content = item.Content,
-                        CreateTime = item.CreateTime,
+                        AlertDate = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = item.Content == null ? string.Empty : item.Content,
                         Title = item.Title,
                         TodoId = item.TodoId,
-                        UpdateTime = item.UpdateTime,
                         UseAlert = item.UseAlert
                     });
                 }
@@ -430,12 +430,12 @@ namespace Todo.WebAPI.Controllers
         }
 
         /// <summary>
-        /// 获取过期Todo
+        /// 获取已完成Todo
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ResponseResult<List<TodoViewModel>> GetExpiredTodos([FromBody]RequestBase model)
+        public ResponseResult<List<TodoViewModel>> GetDoneTodos([FromBody]RequestBase model)
         {
             try
             {
@@ -454,9 +454,9 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                DateTime begin = DateTime.Today;
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : t.AlertTime.Value < begin
+                                           where t.TodoUser.TodoUserId == userId && t.IsDone
+                                           orderby t.AlertTime
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -474,12 +474,11 @@ namespace Todo.WebAPI.Controllers
                     todoVMs.Add(new TodoViewModel()
                     {
                         AlertBeforeMinutes = item.AlertBeforeMinutes,
-                        AlertTime = item.AlertTime,
-                        Content = item.Content,
-                        CreateTime = item.CreateTime,
+                        AlertDate = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = item.AlertTime == null ? string.Empty : item.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = item.Content == null ? string.Empty : item.Content,
                         Title = item.Title,
                         TodoId = item.TodoId,
-                        UpdateTime = item.UpdateTime,
                         UseAlert = item.UseAlert
                     });
                 }
@@ -501,9 +500,9 @@ namespace Todo.WebAPI.Controllers
                 };
             }
         }
-#endregion
+        #endregion
 
-#region 添加/编辑/删除
+        #region 添加/编辑/删除
         /// <summary>
         /// 通过ID获取Todo
         /// </summary>
@@ -562,11 +561,10 @@ namespace Todo.WebAPI.Controllers
                     {
                         TodoId = todo.TodoId,
                         AlertBeforeMinutes = todo.AlertBeforeMinutes,
-                        AlertTime = todo.AlertTime,
-                        Content = todo.Content,
-                        CreateTime = todo.CreateTime,
+                        AlertDate = todo.AlertTime == null ? string.Empty : todo.AlertTime.Value.ToString("yyyy-MM-dd"),
+                        AlertTime = todo.AlertTime == null ? string.Empty : todo.AlertTime.Value.ToString("HH:mm:ss"),
+                        Content = todo.Content == null ? string.Empty : todo.Content,
                         Title = todo.Title,
-                        UpdateTime = todo.UpdateTime,
                         UseAlert = todo.UseAlert
                     }
                 };
@@ -611,7 +609,7 @@ namespace Todo.WebAPI.Controllers
                     throw new ArgumentNullException("标题为空");
                 }
 
-                if(model.TodoId == null)
+                if (model.TodoId == null)
                 {
                     //添加
                     model.TodoId = Guid.NewGuid();
@@ -646,7 +644,7 @@ namespace Todo.WebAPI.Controllers
                 {
                     //编辑
                     //权限判定
-                    if(!hasAuthority(userId, model.TodoId.Value))
+                    if (!hasAuthority(userId, model.TodoId.Value))
                     {
                         return new ResponseResult<Guid?>()
                         {
@@ -688,7 +686,7 @@ namespace Todo.WebAPI.Controllers
                     };
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new ResponseResult<Guid?>()
                 {
@@ -760,7 +758,7 @@ namespace Todo.WebAPI.Controllers
                     Data = model.TodoId
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex);
                 return new ResponseResult<Guid?>()
@@ -771,7 +769,80 @@ namespace Todo.WebAPI.Controllers
                 };
             }
         }
-#endregion
-#endregion
+
+        /// <summary>
+        /// 设置已完成
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ResponseResult<Guid?> SetDone([FromBody]TodoSetDoneRequest model)
+        {
+            try
+            {
+                //换取OpenId
+                var result = getOpenId(model);
+                if (result.ErrCode != 0)
+                {
+                    logger.Error(result.ErrMsg);
+                    return new ResponseResult<Guid?>()
+                    {
+                        ErrCode = 1002,
+                        ErrMsg = result.ErrMsg,
+                        Data = null
+                    };
+                }
+                //通过OpenId获取UserId
+                Guid userId = getUserId(result.Data);
+
+                //权限判定
+                if (!hasAuthority(userId, model.TodoId))
+                {
+                    return new ResponseResult<Guid?>()
+                    {
+                        ErrCode = 1004,
+                        ErrMsg = "没有权限删除该Todo",
+                        Data = null
+                    };
+                }
+
+                //查询Todo
+                var todo = (from t in _todoContext.Todos
+                            where t.TodoId == model.TodoId
+                            select t).FirstOrDefault();
+                if (todo == null)
+                {
+                    return new ResponseResult<Guid?>()
+                    {
+                        ErrCode = 1005,
+                        ErrMsg = "Todo不存在",
+                        Data = null
+                    };
+                }
+
+                //设置已完成
+                todo.IsDone = true;
+                _todoContext.SaveChanges();
+
+                return new ResponseResult<Guid?>()
+                {
+                    ErrCode = 0,
+                    ErrMsg = "success",
+                    Data = model.TodoId
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return new ResponseResult<Guid?>()
+                {
+                    ErrCode = 1001,
+                    ErrMsg = ex.Message,
+                    Data = null
+                };
+            }
+        }
+        #endregion
+        #endregion
     }
 }

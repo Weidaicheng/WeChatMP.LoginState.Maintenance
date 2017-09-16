@@ -19,5 +19,6 @@ namespace Todo.WebAPI.Models
         public DateTime CreateTime { get; set; }
         public DateTime? UpdateTime { get; set; }
         public string FormId { get; set; }
+        public bool IsDone { get; set; }
     }
 }

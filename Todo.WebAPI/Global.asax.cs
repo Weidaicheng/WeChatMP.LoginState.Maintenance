@@ -38,7 +38,7 @@ namespace Todo.WebAPI
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             //EF
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<TodoContext>());
+            Database.SetInitializer<TodoContext>(null);
         }
     }
 }

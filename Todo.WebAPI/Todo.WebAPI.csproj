@@ -208,6 +208,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709160103052_InitialCreate.cs" />
+    <Compile Include="Migrations\201709160103052_InitialCreate.Designer.cs">
+      <DependentUpon>201709160103052_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709161217414_AddIsDone.cs" />
+    <Compile Include="Migrations\201709161217414_AddIsDone.Designer.cs">
+      <DependentUpon>201709161217414_AddIsDone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\RequestBase.cs" />
     <Compile Include="Models\ResponseResult.cs" />
     <Compile Include="Models\Todo.cs" />
@@ -215,6 +224,7 @@
     <Compile Include="Models\TodoContext.cs" />
     <Compile Include="Models\TodoDeleteRequest.cs" />
     <Compile Include="Models\TodoGetRequest.cs" />
+    <Compile Include="Models\TodoSetDoneRequest.cs" />
     <Compile Include="Models\TodoUser.cs" />
     <Compile Include="Models\TodoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -288,6 +298,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201709160103052_InitialCreate.resx">
+      <DependentUpon>201709160103052_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709161217414_AddIsDone.resx">
+      <DependentUpon>201709161217414_AddIsDone.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
