@@ -3,6 +3,7 @@ using Autofac.Integration.WebApi;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -35,6 +36,9 @@ namespace Todo.WebAPI
 
             var container = builder.Build();
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+            //EF
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<TodoContext>());
         }
     }
 }
