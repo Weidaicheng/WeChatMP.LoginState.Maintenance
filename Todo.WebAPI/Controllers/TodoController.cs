@@ -41,6 +41,14 @@ namespace Todo.WebAPI.Controllers
         /// <returns></returns>
         private ResponseResult<string> getOpenId(RequestBase model)
         {
+#if DEBUG
+            return new ResponseResult<string>()
+            {
+                ErrCode = 0,
+                ErrMsg = "success",
+                Data = model.Token
+            };
+#endif
             IRestRequest request = new RestRequest("/GetOpenId", Method.POST);
             request.AddJsonBody(model);
 
@@ -64,7 +72,7 @@ namespace Todo.WebAPI.Controllers
                     throw new ArgumentNullException("OpenId为空");
                 }
 
-                var user = (_todoContext.TodoUsers == null || _todoContext.TodoUsers.Count() == 0) ? null : (from u in _todoContext.TodoUsers
+                var user = (from u in _todoContext.TodoUsers
                             where !string.IsNullOrEmpty(u.OpenId) && u.OpenId == openId
                             select u).FirstOrDefault();
 
@@ -106,7 +114,7 @@ namespace Todo.WebAPI.Controllers
         {
             try
             {
-                var todo = (_todoContext.TodoUsers == null || _todoContext.Todos == null || _todoContext.TodoUsers.Count() == 0 || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
+                var todo = (from t in _todoContext.Todos
                             where t.TodoId == todoId
                             select t).FirstOrDefault();
                 if(todo != null && todo.TodoUser.TodoUserId == userId)
@@ -138,7 +146,7 @@ namespace Todo.WebAPI.Controllers
             {
                 //登录接口使用model.UserId获取OpenId
                 var result = getOpenId(model);
-                if(result.ErrCode != 0)
+                if (result.ErrCode != 0)
                 {
                     logger.Error(result.ErrMsg);
                     return new ResponseResult<List<TodoViewModel>>()
@@ -151,8 +159,10 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                List<Models.Todo> todos = (_todoContext.Todos == null || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
-                                           where t.TodoUser.OpenId == result.Data && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) == 0
+                DateTime begin = DateTime.Today;
+                DateTime end = DateTime.Today.AddDays(1);
+                List<Models.Todo> todos = (from t in _todoContext.Todos
+                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : (t.AlertTime >= begin && t.AlertTime < end)
                                            select t).ToList();
                 if(todos == null)
                 {
@@ -160,7 +170,7 @@ namespace Todo.WebAPI.Controllers
                     {
                         ErrCode = 0,
                         ErrMsg = "success",
-                        Data = null
+                        Data = new List<TodoViewModel>()
                     };
                 }
 
@@ -223,8 +233,10 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                List<Models.Todo> todos = (_todoContext.Todos == null || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 1 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 3
+                DateTime begin = DateTime.Today.AddDays(1);
+                DateTime end = DateTime.Today.AddDays(4);
+                List<Models.Todo> todos = (from t in _todoContext.Todos
+                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false :  (t.AlertTime >= begin && t.AlertTime < end)
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -295,8 +307,10 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                List<Models.Todo> todos = (_todoContext.Todos == null || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 3 && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) <= 7
+                DateTime begin = DateTime.Today.AddDays(4);
+                DateTime end = DateTime.Today.AddDays(8);
+                List<Models.Todo> todos = (from t in _todoContext.Todos
+                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : (t.AlertTime >= begin && t.AlertTime < end)
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -367,8 +381,9 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                List<Models.Todo> todos = (_todoContext.Todos == null || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) > 7
+                DateTime begin = DateTime.Today.AddDays(8);
+                List<Models.Todo> todos = (from t in _todoContext.Todos
+                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? true : t.AlertTime.Value >= begin
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -439,8 +454,9 @@ namespace Todo.WebAPI.Controllers
                 //通过OpenId获取UserId
                 Guid userId = getUserId(result.Data);
 
-                List<Models.Todo> todos = (_todoContext.Todos == null || _todoContext.Todos.Count() == 0) ? null : (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && DbFunctions.DiffDays(t.AlertTime, DateTime.Now) < 0
+                DateTime begin = DateTime.Today;
+                List<Models.Todo> todos = (from t in _todoContext.Todos
+                                           where t.TodoUser.TodoUserId == userId && t.AlertTime == null ? false : t.AlertTime.Value < begin
                                            select t).ToList();
                 if (todos == null)
                 {
@@ -485,9 +501,9 @@ namespace Todo.WebAPI.Controllers
                 };
             }
         }
-        #endregion
+#endregion
 
-        #region 添加/编辑/删除
+#region 添加/编辑/删除
         /// <summary>
         /// 通过ID获取Todo
         /// </summary>
@@ -755,7 +771,7 @@ namespace Todo.WebAPI.Controllers
                 };
             }
         }
-        #endregion
-        #endregion
+#endregion
+#endregion
     }
 }
