@@ -382,8 +382,9 @@ namespace Todo.WebAPI.Controllers
                 Guid userId = getUserId(result.Data);
 
                 DateTime begin = DateTime.Today.AddDays(8);
+                DateTime begin2 = DateTime.Today;
                 List<Models.Todo> todos = (from t in _todoContext.Todos
-                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && t.AlertTime == null || t.AlertTime.Value >= begin
+                                           where t.TodoUser.TodoUserId == userId && !t.IsDone && (t.AlertTime == null || t.AlertTime.Value >= begin || t.AlertTime.Value < begin2)
                                            orderby t.AlertTime
                                            select t).ToList();
                 if (todos == null)
