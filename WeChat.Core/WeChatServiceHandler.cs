@@ -209,7 +209,7 @@ namespace WeChat.Core
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				throw ex;
+				throw;
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace WeChat.Core
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				throw ex;
+				throw;
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace WeChat.Core
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				throw ex;
+				throw;
 			}
 		}
 
@@ -344,10 +344,51 @@ namespace WeChat.Core
 			catch (Exception ex)
 			{
 				logger.Error(ex);
-				throw ex;
+				throw;
 			}
 		}
-		#endregion
-		#endregion
-	}
+        #endregion
+
+        #region 临时素材
+        /// <summary>
+        /// 获取临时素材
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="mediaId"></param>
+        /// <returns></returns>
+        public Media GetMedia(string accessToken, string mediaId)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(accessToken))
+                {
+                    throw new ArgumentNullException("AccessToken为空");
+                }
+                if(string.IsNullOrEmpty(mediaId))
+                {
+                    throw new ArgumentNullException("Media Id为空");
+                }
+
+                IRestRequest request = new RestRequest("cgi-bin/media/get", Method.POST);
+                request.AddQueryParameter("access_token", accessToken);
+                request.AddQueryParameter("media_id", mediaId);
+
+                IRestResponse response = _client.Execute(request);
+                if(response.Content.Contains("video_url"))
+                {
+                    return JsonConvert.DeserializeObject<Media>(response.Content);
+                }
+
+                Error error = JsonConvert.DeserializeObject<Error>(response.Content);
+                throw new Exception(error.errmsg);
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+                throw;
+            }
+        }
+        #endregion
+        #endregion
+    }
 }

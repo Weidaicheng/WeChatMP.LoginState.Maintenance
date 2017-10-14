@@ -54,7 +54,7 @@ namespace Cache.Redis
             catch (Exception ex)
             {
                 logger.Error(ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -75,7 +75,7 @@ namespace Cache.Redis
             catch (Exception ex)
             {
                 logger.Error(ex);
-                throw ex;
+                throw;
             }
         }
 		#endregion
@@ -119,6 +119,35 @@ namespace Cache.Redis
 				throw ex;
 			}
 		}
-		#endregion
-	}
+        #endregion
+
+        #region Message Distinct
+        /// <summary>
+        /// 消息排重
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>未重复：true，重复：false</returns>
+        public bool MessageDistinct(string message)
+        {
+            try
+            {
+                var db = Connection.GetDatabase();
+
+                string messageGet = db.StringGet(message);
+                if(string.IsNullOrEmpty(messageGet))
+                {
+                    db.StringSet(message, message, TimeSpan.FromSeconds(ConfigurationHelper.MessageDistinctSeconds.Value));
+                    return true;
+                }
+
+                return false;
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+                throw;
+            }
+        }
+        #endregion
+    }
 }

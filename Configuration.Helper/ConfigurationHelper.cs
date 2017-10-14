@@ -13,13 +13,14 @@ namespace Configuration.Helper
         private static string redisPassword;
         private static int? expireDays;
 		private static int? accessTokenExpireSeconds;
-		#endregion
+        private static int? messageDistinctSeconds;
+        #endregion
 
-		#region 属性
-		/// <summary>
-		/// AppId
-		/// </summary>
-		public static string AppId
+        #region 属性
+        /// <summary>
+        /// AppId
+        /// </summary>
+        public static string AppId
         {
             get
             {
@@ -143,6 +144,22 @@ namespace Configuration.Helper
 				return accessTokenExpireSeconds;
 			}
 		}
-		#endregion
-	}
+
+        /// <summary>
+		/// 消息排重过期秒数
+		/// </summary>
+		public static int? MessageDistinctSeconds
+        {
+			get
+			{
+				if (messageDistinctSeconds == null)
+				{
+                    messageDistinctSeconds = int.Parse(ConfigurationManager.AppSettings["MessageDistinctSeconds"]);
+				}
+
+				return messageDistinctSeconds;
+			}
+		}
+        #endregion
+    }
 }
