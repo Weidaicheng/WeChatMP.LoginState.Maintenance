@@ -1,6 +1,6 @@
 ﻿namespace Model.WeChat
 {
-    public class Media
+    public class MediaVideo
     {
         public string video_url { get; set; }
     }

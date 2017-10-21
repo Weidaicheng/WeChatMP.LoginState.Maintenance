@@ -30,6 +30,7 @@ namespace WeChat.Core
         #endregion
 
         #region 微信方法
+        #region 认证
         /// <summary>
         /// 获取OpenId
         /// </summary>
@@ -64,44 +65,45 @@ namespace WeChat.Core
             }
         }
 
-		/// <summary>
-		/// 获取AccessToken
-		/// </summary>
-		/// <returns></returns>
-		public AccessToken GetAccessToken()
-		{
-			try
-			{
-				IRestRequest request = new RestRequest("cgi-bin/token", Method.GET);
-				request.AddQueryParameter("grant_type", "client_credential");
-				request.AddQueryParameter("appid", ConfigurationHelper.AppId);
-				request.AddQueryParameter("secret", ConfigurationHelper.AppSecret);
+        /// <summary>
+        /// 获取AccessToken
+        /// </summary>
+        /// <returns></returns>
+        public AccessToken GetAccessToken()
+        {
+            try
+            {
+                IRestRequest request = new RestRequest("cgi-bin/token", Method.GET);
+                request.AddQueryParameter("grant_type", "client_credential");
+                request.AddQueryParameter("appid", ConfigurationHelper.AppId);
+                request.AddQueryParameter("secret", ConfigurationHelper.AppSecret);
 
-				IRestResponse response = _client.Execute(request);
-				string content = response.Content;
-				if (content.Contains("access_token"))
-				{
-					return JsonConvert.DeserializeObject<AccessToken>(content);
-				}
+                IRestResponse response = _client.Execute(request);
+                string content = response.Content;
+                if (content.Contains("access_token"))
+                {
+                    return JsonConvert.DeserializeObject<AccessToken>(content);
+                }
 
-				throw new Exception("未能获取AccessToken");
-			}
-			catch (Exception ex)
-			{
-				logger.Error(ex);
-				throw ex;
-			}
-		}
+                throw new Exception("未能获取AccessToken");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                throw ex;
+            }
+        }
+        #endregion
 
-		#region 消息模板
-		/// <summary>
-		/// 获取小程序模板库标题列表
-		/// </summary>
-		/// <param name="accessToken"></param>
-		/// <param name="offset"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public TemplateTitleList GetTemplateTitleList(string accessToken, int offset, int count)
+        #region 消息模板
+        /// <summary>
+        /// 获取小程序模板库标题列表
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public TemplateTitleList GetTemplateTitleList(string accessToken, int offset, int count)
 		{
 			try
 			{
@@ -355,8 +357,8 @@ namespace WeChat.Core
         /// </summary>
         /// <param name="accessToken"></param>
         /// <param name="mediaId"></param>
-        /// <returns></returns>
-        public Media GetMedia(string accessToken, string mediaId)
+        /// <returns>返回类型为MediaVideo或Error</returns>
+        public dynamic GetMedia(string accessToken, string mediaId)
         {
             try
             {
@@ -369,20 +371,72 @@ namespace WeChat.Core
                     throw new ArgumentNullException("Media Id为空");
                 }
 
-                IRestRequest request = new RestRequest("cgi-bin/media/get", Method.POST);
+                IRestRequest request = new RestRequest("cgi-bin/media/get", Method.GET);
                 request.AddQueryParameter("access_token", accessToken);
                 request.AddQueryParameter("media_id", mediaId);
 
                 IRestResponse response = _client.Execute(request);
                 if(response.Content.Contains("video_url"))
                 {
-                    return JsonConvert.DeserializeObject<Media>(response.Content);
+                    //返回MeidaVideo类型
+                    return JsonConvert.DeserializeObject<MediaVideo>(response.Content);
                 }
-
-                Error error = JsonConvert.DeserializeObject<Error>(response.Content);
-                throw new Exception(error.errmsg);
+                else if(response.Content.Contains("errcode"))
+                {
+                    //返回Error类型
+                    return JsonConvert.DeserializeObject<Error>(response.Content);
+                }
+                else
+                {
+                    //图片类型直接返回图片
+                    return response.Content;
+                }
             }
             catch(Exception ex)
+            {
+                logger.Error(ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 新增临时素材
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="location"></param>
+        /// <param name="type"></param>
+        /// <returns>返回类型为MediaUpload或Error</returns>
+        public dynamic UploadMedia(string accessToken, string location, MediaType type)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    throw new ArgumentNullException("AccessToken为空");
+                }
+                if (string.IsNullOrEmpty(location))
+                {
+                    throw new ArgumentNullException("素材位置为空");
+                }
+
+                IRestRequest request = new RestRequest("cgi-bin/media/upload", Method.POST);
+                request.AddQueryParameter("access_token", accessToken);
+                request.AddQueryParameter("type", type.ToString());
+                request.AddFile("media", location);
+
+                IRestResponse response = _client.Execute(request);
+                if (response.Content.Contains("media_id"))
+                {
+                    //返回MediaUpload类型
+                    return JsonConvert.DeserializeObject<MediaUpload>(response.Content);
+                }
+                else
+                {
+                    //返回Error类型
+                    return JsonConvert.DeserializeObject<Error>(response.Content);
+                }
+            }
+            catch (Exception ex)
             {
                 logger.Error(ex);
                 throw;

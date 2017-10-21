@@ -58,6 +58,7 @@
     <Compile Include="Response\ResponseResult.cs" />
     <Compile Include="WeChat\KeywordList.cs" />
     <Compile Include="WeChat\Media.cs" />
+    <Compile Include="WeChat\MediaUpload.cs" />
     <Compile Include="WeChat\OpenId.cs" />
     <Compile Include="WeChat\TemplateAdd.cs" />
     <Compile Include="WeChat\Error.cs" />
