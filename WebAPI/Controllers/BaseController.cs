@@ -1,5 +1,6 @@
 ﻿using Cache.Redis;
 using NLog;
+using RestSharp;
 using System.Web.Http;
 using WeChat.Core;
 
@@ -13,14 +14,14 @@ namespace WebAPI.Controllers
         #endregion
 
         #region Log
-        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         #endregion
 
         #region .ctor
-        public BaseController(WeChatServiceHandler weChatServiceHandler, RedisHandler redisHandler)
+        public BaseController()
         {
-            _weChatServiceHandler = weChatServiceHandler;
-            _redisHandler = redisHandler;
+            _weChatServiceHandler = new WeChatServiceHandler(new RestClient());
+            _redisHandler = new RedisHandler();
         }
         #endregion
 

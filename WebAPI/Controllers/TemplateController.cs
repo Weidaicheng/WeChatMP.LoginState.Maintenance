@@ -1,14 +1,8 @@
-﻿using Cache.Redis;
-using Model;
-using Model.Request.Template;
+﻿using Model.Request.Template;
 using Model.Response;
 using Model.WeChat;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using WeChat.Core;
 
@@ -18,7 +12,6 @@ namespace WebAPI.Controllers
     {
 		#region field
 		private readonly WeChatServiceHandler _weChatServiceHandler;
-		private readonly RedisHandler _redisHandler;
 		#endregion
 
 		#region Log
@@ -26,19 +19,19 @@ namespace WebAPI.Controllers
 		#endregion
 
 		#region .ctor
-		public TemplateController(WeChatServiceHandler weChatServiceHandler, RedisHandler redisHandler)
+		public TemplateController(WeChatServiceHandler weChatServiceHandler) 
 		{
 			_weChatServiceHandler = weChatServiceHandler;
-			_redisHandler = redisHandler;
 		}
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// 获取小程序模板库标题列表
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
-		[HttpPost]
+        #region 模板消息管理
+        /// <summary>
+        /// 获取小程序模板库标题列表
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
 		public ResponseResult<TemplateTitleResponse> GetTemplateTitleList([FromBody]TemplateTitleListRequest model)
 		{
 			try
@@ -259,13 +252,15 @@ namespace WebAPI.Controllers
 				};
 			}
 		}
+        #endregion
 
-		/// <summary>
-		/// 发送模板消息
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
-		[HttpPost]
+        #region 发送模板消息
+        /// <summary>
+        /// 发送模板消息
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
 		public ResponseResult<object> SendTemplate([FromBody]TemplateSendRequest model)
 		{
 			try
@@ -302,5 +297,6 @@ namespace WebAPI.Controllers
 				};
 			}
 		}
-	}
+        #endregion
+    }
 }

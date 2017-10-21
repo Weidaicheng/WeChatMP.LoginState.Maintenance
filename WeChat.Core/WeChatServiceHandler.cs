@@ -5,6 +5,7 @@ using RestSharp;
 using System;
 using Model.WeChat;
 using Model.Request.Template;
+using System.IO;
 
 namespace WeChat.Core
 {
@@ -357,7 +358,7 @@ namespace WeChat.Core
         /// </summary>
         /// <param name="accessToken"></param>
         /// <param name="mediaId"></param>
-        /// <returns>返回类型为MediaVideo或Error</returns>
+        /// <returns>返回类型为MediaVideo或Error或byte[]</returns>
         public dynamic GetMedia(string accessToken, string mediaId)
         {
             try
@@ -388,8 +389,8 @@ namespace WeChat.Core
                 }
                 else
                 {
-                    //图片类型直接返回图片
-                    return response.Content;
+                    //图片类型直接返回字节
+                    return _client.DownloadData(request);
                 }
             }
             catch(Exception ex)

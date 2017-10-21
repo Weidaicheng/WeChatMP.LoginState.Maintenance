@@ -3,6 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
 using Cache.Redis;
 using Model.WeChat;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace WeChat.Core.Test
 {
@@ -36,7 +39,9 @@ namespace WeChat.Core.Test
             }
             else
             {
-                Console.WriteLine($"{result}");
+                var buffer = result as byte[];
+                Bitmap bitmap = new Bitmap(new MemoryStream(buffer));
+                bitmap.Save("image.png", ImageFormat.Png);
             }
         }
 
