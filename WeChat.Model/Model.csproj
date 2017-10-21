@@ -56,14 +56,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\RequestBase.cs" />
     <Compile Include="Response\ResponseResult.cs" />
+    <Compile Include="WeChat\EventMessage.cs" />
+    <Compile Include="WeChat\ImageMessage.cs" />
     <Compile Include="WeChat\KeywordList.cs" />
     <Compile Include="WeChat\Media.cs" />
     <Compile Include="WeChat\MediaUpload.cs" />
+    <Compile Include="WeChat\MessageBase.cs" />
     <Compile Include="WeChat\OpenId.cs" />
+    <Compile Include="WeChat\ProgramPageMessage.cs" />
     <Compile Include="WeChat\TemplateAdd.cs" />
     <Compile Include="WeChat\Error.cs" />
     <Compile Include="WeChat\TemplateList.cs" />
     <Compile Include="WeChat\TemplateTitleList.cs" />
+    <Compile Include="WeChat\TextMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
