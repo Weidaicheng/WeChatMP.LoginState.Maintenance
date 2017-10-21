@@ -14,7 +14,7 @@ using WeChat.Core;
 
 namespace WebAPI.Controllers
 {
-    public class TemplateController : ApiController
+    public class TemplateController : BaseController
     {
 		#region field
 		private readonly WeChatServiceHandler _weChatServiceHandler;
@@ -43,14 +43,7 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				string accessTokenStr = _redisHandler.GetAccessToken();
-				if(string.IsNullOrEmpty(accessTokenStr))
-				{
-					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-					_redisHandler.SaveAccessToken(accessTokenStr);
-				}
-
-				TemplateTitleList templateTitleList = _weChatServiceHandler.GetTemplateTitleList(accessTokenStr, model.Offset, model.Count);
+				TemplateTitleList templateTitleList = _weChatServiceHandler.GetTemplateTitleList(AccessToken, model.Offset, model.Count);
 				if (templateTitleList.errcode == 0)
 				{
 					return new ResponseResult<TemplateTitleResponse>()
@@ -97,14 +90,7 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				string accessTokenStr = _redisHandler.GetAccessToken();
-				if (string.IsNullOrEmpty(accessTokenStr))
-				{
-					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-					_redisHandler.SaveAccessToken(accessTokenStr);
-				}
-
-				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(accessTokenStr, model.Id);
+				KeywordList keywordList = _weChatServiceHandler.GetKeywordList(AccessToken, model.Id);
 				if (keywordList.errcode == 0)
 				{
 					return new ResponseResult<KeywordResponse>()
@@ -152,14 +138,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                string accessTokenStr = _redisHandler.GetAccessToken();
-                if (string.IsNullOrEmpty(accessTokenStr))
-                {
-                    accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-                    _redisHandler.SaveAccessToken(accessTokenStr);
-                }
-
-                TemplateAdd templateAdd = _weChatServiceHandler.AddTemplate(accessTokenStr, model.Id, model.KyewordIdList);
+                TemplateAdd templateAdd = _weChatServiceHandler.AddTemplate(AccessToken, model.Id, model.KyewordIdList);
                 if (templateAdd.errcode == 0)
                 {
                     return new ResponseResult<string>()
@@ -202,14 +181,7 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				string accessTokenStr = _redisHandler.GetAccessToken();
-				if (string.IsNullOrEmpty(accessTokenStr))
-				{
-					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-					_redisHandler.SaveAccessToken(accessTokenStr);
-				}
-
-				TemplateList templateList = _weChatServiceHandler.GetTemplateList(accessTokenStr, model.Offset, model.Count);
+				TemplateList templateList = _weChatServiceHandler.GetTemplateList(AccessToken, model.Offset, model.Count);
 				if (templateList.errcode == 0)
 				{
 					return new ResponseResult<TemplateResponse>()
@@ -255,14 +227,7 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				string accessTokenStr = _redisHandler.GetAccessToken();
-				if (string.IsNullOrEmpty(accessTokenStr))
-				{
-					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-					_redisHandler.SaveAccessToken(accessTokenStr);
-				}
-
-				Error error = _weChatServiceHandler.DeleteTemplate(accessTokenStr, model.TemplateId);
+				Error error = _weChatServiceHandler.DeleteTemplate(AccessToken, model.TemplateId);
 				if (error.errcode == 0)
 				{
 					return new ResponseResult<object>()
@@ -305,14 +270,7 @@ namespace WebAPI.Controllers
 		{
 			try
 			{
-				string accessTokenStr = _redisHandler.GetAccessToken();
-				if (string.IsNullOrEmpty(accessTokenStr))
-				{
-					accessTokenStr = _weChatServiceHandler.GetAccessToken().access_token;
-					_redisHandler.SaveAccessToken(accessTokenStr);
-				}
-
-				Error error = _weChatServiceHandler.SendTemplate(accessTokenStr, model);
+				Error error = _weChatServiceHandler.SendTemplate(AccessToken, model);
 				if (error.errcode == 0)
 				{
 					return new ResponseResult<object>()
